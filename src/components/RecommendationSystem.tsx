@@ -1,0 +1,189 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { TrendingUp, Star, ShoppingCart, Heart, Filter } from 'lucide-react';
+import { faker } from '@faker-js/faker';
+
+const RecommendationSystem: React.FC = () => {
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [userPreferences, setUserPreferences] = useState({
+    priceRange: 'medium',
+    category: 'electronics',
+    brand: 'any',
+  });
+
+  const generateProducts = () => {
+    return Array.from({ length: 8 }, () => ({
+      id: faker.string.uuid(),
+      name: faker.commerce.productName(),
+      price: faker.commerce.price({ min: 20, max: 500, dec: 0 }),
+      rating: faker.number.float({ min: 3.5, max: 5, fractionDigits: 1 }),
+      reviews: faker.number.int({ min: 10, max: 1000 }),
+      image: `https://picsum.photos/300/200?random=${faker.number.int({ min: 1, max: 1000 })}`,
+      category: faker.helpers.arrayElement(['Elektronik', 'Pakaian', 'Buku', 'Rumah', 'Olahraga']),
+      confidence: faker.number.float({ min: 0.7, max: 0.98, fractionDigits: 2 }),
+    }));
+  };
+
+  const [recommendations, setRecommendations] = useState(generateProducts());
+
+  const categories = ['semua', 'elektronik', 'pakaian', 'buku', 'rumah', 'olahraga'];
+
+  const handleGetRecommendations = () => {
+    setRecommendations(generateProducts());
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
+          <TrendingUp className="h-6 w-6 mr-2 text-blue-600" />
+          Rekomendasi Produk
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rentang Harga
+            </label>
+            <select
+              value={userPreferences.priceRange}
+              onChange={(e) => setUserPreferences({ ...userPreferences, priceRange: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            >
+              <option value="low">Rp 0 - Rp 1.500.000</option>
+              <option value="medium">Rp 1.500.000 - Rp 4.500.000</option>
+              <option value="high">Rp 4.500.000+</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Kategori
+            </label>
+            <select
+              value={userPreferences.category}
+              onChange={(e) => setUserPreferences({ ...userPreferences, category: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            >
+              <option value="electronics">Elektronik</option>
+              <option value="clothing">Pakaian</option>
+              <option value="books">Buku</option>
+              <option value="home">Rumah</option>
+              <option value="sports">Olahraga</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Preferensi Merek
+            </label>
+            <select
+              value={userPreferences.brand}
+              onChange={(e) => setUserPreferences({ ...userPreferences, brand: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            >
+              <option value="any">Merek Apa Saja</option>
+              <option value="premium">Merek Premium</option>
+              <option value="budget">Ramah di Kantong</option>
+            </select>
+          </div>
+        </div>
+
+        <button
+          onClick={handleGetRecommendations}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+        >
+          <TrendingUp className="h-5 w-5" />
+          <span>Dapatkan Rekomendasi</span>
+        </button>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold text-gray-900">Direkomendasikan untuk Anda</h3>
+          <div className="flex items-center space-x-2">
+            <Filter className="h-5 w-5 text-gray-400" />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-1 text-sm"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {recommendations.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h4 className="font-semibold text-gray-900 mb-1 truncate">{product.name}</h4>
+                <p className="text-sm text-gray-600 mb-2">{product.category}</p>
+                
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-lg font-bold text-blue-600">Rp{product.price}</span>
+                  <div className="flex items-center space-x-1">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="text-sm text-gray-600">{product.rating}</span>
+                    <span className="text-xs text-gray-500">({product.reviews})</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
+                    {(product.confidence * 100).toFixed(0)}% cocok
+                  </span>
+                </div>
+
+                <div className="flex space-x-2">
+                  <button className="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors flex items-center justify-center space-x-1">
+                    <ShoppingCart className="h-4 w-4" />
+                    <span>+ Keranjang</span>
+                  </button>
+                  <button className="p-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                    <Heart className="h-4 w-4 text-gray-600" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">Wawasan Rekomendasi</h3>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-3xl font-bold text-blue-600 mb-1">94%</div>
+            <div className="text-gray-600">Tingkat Akurasi</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-green-600 mb-1">2.3x</div>
+            <div className="text-gray-600">Rasio Klik-tayang</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-purple-600 mb-1">87%</div>
+            <div className="text-gray-600">Kepuasan Pengguna</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RecommendationSystem;
