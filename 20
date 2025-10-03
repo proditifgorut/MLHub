@@ -3,7 +3,7 @@
     <div class="bg-white rounded-xl shadow-lg p-8">
       <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
         <Camera class="h-6 w-6 mr-2 text-blue-600" />
-        Image Recognition
+        Pengenalan Gambar
       </h2>
 
       <div
@@ -19,24 +19,24 @@
         <input ref="fileInput" type="file" @change="onFileChange" accept="image/*" class="hidden" />
         <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
         <h3 class="text-lg font-medium text-gray-900 mb-2">
-          {{ isOverDropZone ? 'Drop image here' : 'Upload an image' }}
+          {{ isOverDropZone ? 'Jatuhkan gambar di sini' : 'Unggah gambar' }}
         </h3>
         <p class="text-gray-600 mb-4">
-          Drag and drop an image, or click to browse
+          Seret dan jatuhkan gambar, atau klik untuk menelusuri
         </p>
         <div class="text-sm text-gray-500">
-          Supported formats: PNG, JPG, JPEG, GIF (Max size: 10MB)
+          Format yang didukung: PNG, JPG, JPEG, GIF (Ukuran maks: 10MB)
         </div>
       </div>
 
       <div class="mt-8">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Or try with a sample image:</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Atau coba dengan gambar sampel:</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <img
             v-for="(image, index) in sampleImages"
             :key="index"
             :src="image"
-            :alt="`Sample ${index + 1}`"
+            :alt="`Sampel ${index + 1}`"
             class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
             @click="selectSampleImage(image)"
           />
@@ -46,7 +46,7 @@
 
     <transition name="fade-transform">
       <div v-if="uploadedImage || isAnalyzing" class="bg-white rounded-xl shadow-lg p-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Analysis Results</h3>
+        <h3 class="text-xl font-semibold text-gray-900 mb-6">Hasil Analisis</h3>
         
         <div class="grid md:grid-cols-2 gap-8">
           <div>
@@ -64,13 +64,13 @@
             <div v-if="isAnalyzing" class="flex items-center justify-center h-full">
               <div class="text-center">
                 <Zap class="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-                <p class="text-gray-600">Analyzing image...</p>
+                <p class="text-gray-600">Menganalisis gambar...</p>
               </div>
             </div>
             <div v-else-if="prediction">
               <div class="flex items-center mb-4">
                 <CheckCircle class="h-6 w-6 text-green-600 mr-2" />
-                <h4 class="text-lg font-semibold text-gray-900">Prediction Complete</h4>
+                <h4 class="text-lg font-semibold text-gray-900">Prediksi Selesai</h4>
               </div>
 
               <div class="mb-6">
@@ -78,12 +78,12 @@
                   {{ prediction.category }}
                 </div>
                 <div class="text-gray-600">
-                  Confidence: {{(prediction.confidence * 100).toFixed(1)}}%
+                  Keyakinan: {{(prediction.confidence * 100).toFixed(1)}}%
                 </div>
               </div>
 
               <div>
-                <h5 class="font-medium text-gray-900 mb-3">Top Predictions:</h5>
+                <h5 class="font-medium text-gray-900 mb-3">Prediksi Teratas:</h5>
                 <div class="space-y-2">
                   <div v-for="(pred, index) in prediction.predictions" :key="index" class="flex items-center justify-between">
                     <span class="text-gray-700">{{ pred.label }}</span>
@@ -125,7 +125,7 @@ function handleFiles(files: File[] | null) {
   if (files && files.length > 0) {
     const file = files[0];
     if (file.size > 10 * 1024 * 1024) {
-      alert("File size cannot exceed 10MB.");
+      alert("Ukuran file tidak boleh melebihi 10MB.");
       return;
     }
     const imageUrl = URL.createObjectURL(file);
@@ -153,12 +153,12 @@ const analyzeImage = () => {
   prediction.value = null;
   setTimeout(() => {
     prediction.value = {
-      category: 'Cat',
+      category: 'Kucing',
       confidence: 0.94,
       predictions: [
-        { label: 'Cat', confidence: 0.94 },
-        { label: 'Dog', confidence: 0.04 },
-        { label: 'Tiger', confidence: 0.02 },
+        { label: 'Kucing', confidence: 0.94 },
+        { label: 'Anjing', confidence: 0.04 },
+        { label: 'Harimau', confidence: 0.02 },
       ],
     };
     isAnalyzing.value = false;

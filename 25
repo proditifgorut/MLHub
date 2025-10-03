@@ -2,9 +2,9 @@
   <div class="min-h-screen py-8 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Machine Learning Projects</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Proyek Machine Learning</h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Explore common ML projects with explanations, algorithms, and example results.
+          Jelajahi proyek ML umum dengan penjelasan, algoritma, dan contoh hasil.
         </p>
       </div>
 
@@ -29,25 +29,25 @@ use([CanvasRenderer, BarChart, LineChart, PieChart, ScatterChart, GridComponent,
 
 const projects = [
   {
-    category: 'Data Mining', field: 'Data Science', title: 'Stock Price Prediction',
-    description: 'Using time-series analysis to forecast future stock or cryptocurrency prices based on historical data.',
-    algorithm: 'Regression / LSTM', formula: 'y = mx + b (Linear Regression)', dataset: 'Yahoo Finance, Binance API',
+    category: 'Penambangan Data', field: 'Sains Data', title: 'Prediksi Harga Saham',
+    description: 'Menggunakan analisis deret waktu untuk meramalkan harga saham atau mata uang kripto di masa depan berdasarkan data historis.',
+    algorithm: 'Regresi / LSTM', formula: 'y = mx + b (Regresi Linier)', dataset: 'Yahoo Finance, Binance API',
     chartType: 'line',
     chartOption: {
-      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: Array.from({ length: 12 }, (_, i) => `Day ${i + 1}`) }, yAxis: { type: 'value' },
+      tooltip: { trigger: 'axis' }, legend: { data: ['Aktual', 'Prediksi'] }, xAxis: { type: 'category', data: Array.from({ length: 12 }, (_, i) => `Hari ${i + 1}`) }, yAxis: { type: 'value' },
       series: [
-        { name: 'Actual', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
-        { name: 'Predicted', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
+        { name: 'Aktual', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
+        { name: 'Prediksi', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
       ],
     },
   },
   {
-    category: 'Data Mining', field: 'Data Science', title: 'Customer Segmentation',
-    description: 'Grouping customers into distinct segments based on purchasing behavior or demographics for targeted marketing.',
-    algorithm: 'K-Means Clustering', formula: 'minimize Σ ||x - μi||²', dataset: 'E-commerce transaction data',
+    category: 'Penambangan Data', field: 'Sains Data', title: 'Segmentasi Pelanggan',
+    description: 'Mengelompokkan pelanggan ke dalam segmen-segmen berbeda berdasarkan perilaku pembelian atau demografi untuk pemasaran yang ditargetkan.',
+    algorithm: 'K-Means Clustering', formula: 'minimize Σ ||x - μi||²', dataset: 'Data transaksi e-commerce',
     chartType: 'scatter',
     chartOption: {
-      tooltip: { trigger: 'item' }, legend: {}, xAxis: { name: 'Spending Score' }, yAxis: { name: 'Income' },
+      tooltip: { trigger: 'item' }, legend: {}, xAxis: { name: 'Skor Belanja' }, yAxis: { name: 'Pendapatan' },
       series: [
         { name: 'Cluster 1', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#8884d8' } },
         { name: 'Cluster 2', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#82ca9d' } },
@@ -56,59 +56,59 @@ const projects = [
     },
   },
   {
-    category: 'Data Mining', field: 'Data Analysis', title: 'Sentiment Analysis',
-    description: 'Analyzing product reviews to determine if the sentiment is positive, negative, or neutral using Natural Language Processing (NLP).',
-    algorithm: 'NLP / Naive Bayes', formula: 'P(A|B) = [P(B|A) * P(A)] / P(B)', dataset: 'Amazon/Yelp Reviews',
+    category: 'Penambangan Data', field: 'Analisis Data', title: 'Analisis Sentimen',
+    description: 'Menganalisis ulasan produk untuk menentukan apakah sentimennya positif, negatif, atau netral menggunakan Natural Language Processing (NLP).',
+    algorithm: 'NLP / Naive Bayes', formula: 'P(A|B) = [P(B|A) * P(A)] / P(B)', dataset: 'Ulasan Amazon/Yelp',
     chartType: 'bar',
     chartOption: {
-      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: ['Positive', 'Neutral', 'Negative'] }, yAxis: { type: 'value' },
-      series: [{ name: 'Review Count', type: 'bar', data: [faker.number.int({ min: 500, max: 1000 }), faker.number.int({ min: 200, max: 500 }), faker.number.int({ min: 100, max: 300 })] }],
+      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: ['Positif', 'Netral', 'Negatif'] }, yAxis: { type: 'value' },
+      series: [{ name: 'Jumlah Ulasan', type: 'bar', data: [faker.number.int({ min: 500, max: 1000 }), faker.number.int({ min: 200, max: 500 }), faker.number.int({ min: 100, max: 300 })] }],
     },
   },
   {
-    category: 'Data Mining', field: 'Data Science', title: 'Fraud Detection',
-    description: 'Identifying suspicious patterns in financial transactions to detect and prevent fraudulent activities.',
-    algorithm: 'Decision Tree / Random Forest', formula: 'Gini Impurity / Information Gain', dataset: 'Credit Card Transactions',
+    category: 'Penambangan Data', field: 'Sains Data', title: 'Deteksi Penipuan',
+    description: 'Mengidentifikasi pola mencurigakan dalam transaksi keuangan untuk mendeteksi dan mencegah aktivitas penipuan.',
+    algorithm: 'Pohon Keputusan / Random Forest', formula: 'Gini Impurity / Information Gain', dataset: 'Transaksi Kartu Kredit',
     chartType: 'pie',
     chartOption: {
       tooltip: { trigger: 'item' }, legend: {},
       series: [{
-        name: 'Transactions', type: 'pie', radius: '70%',
+        name: 'Transaksi', type: 'pie', radius: '70%',
         data: [
-          { value: faker.number.int({ min: 950, max: 1000 }), name: 'Not Fraud', itemStyle: { color: '#82ca9d' } },
-          { value: faker.number.int({ min: 10, max: 50 }), name: 'Fraud', itemStyle: { color: '#EF4444' } },
+          { value: faker.number.int({ min: 950, max: 1000 }), name: 'Bukan Penipuan', itemStyle: { color: '#82ca9d' } },
+          { value: faker.number.int({ min: 10, max: 50 }), name: 'Penipuan', itemStyle: { color: '#EF4444' } },
         ],
       }],
     },
   },
   {
-    category: 'Data Mining', field: 'Data Science', title: 'Customer Churn Prediction',
-    description: 'Predicting which customers are likely to stop using a service, allowing for proactive retention efforts.',
-    algorithm: 'Classification (Logistic Regression)', formula: 'P(y=1) = 1 / (1 + e^-z)', dataset: 'Subscription Service Data',
+    category: 'Penambangan Data', field: 'Sains Data', title: 'Prediksi Churn Pelanggan',
+    description: 'Memprediksi pelanggan mana yang kemungkinan akan berhenti menggunakan layanan, memungkinkan upaya retensi proaktif.',
+    algorithm: 'Klasifikasi (Regresi Logistik)', formula: 'P(y=1) = 1 / (1 + e^-z)', dataset: 'Data Layanan Langganan',
     chartType: 'bar',
     chartOption: {
       grid: { containLabel: true }, tooltip: { trigger: 'axis' },
-      xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['Will Churn', 'Will Not Churn'] },
-      series: [{ name: 'Customer Count', type: 'bar', data: [150, 850], itemStyle: { color: '#ffc658' } }],
+      xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['Akan Churn', 'Tidak Akan Churn'] },
+      series: [{ name: 'Jumlah Pelanggan', type: 'bar', data: [150, 850], itemStyle: { color: '#ffc658' } }],
     },
   },
   {
-    category: 'Web/Mobile', field: 'ML Engineering', title: 'Product Recommendation System',
-    description: 'Suggesting products to users based on their past behavior or the behavior of similar users.',
-    algorithm: 'Collaborative Filtering', formula: 'Similarity(A, B) = cos(θ)', dataset: 'User ratings, purchase history',
-    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><h4 class="font-semibold mb-2">Example Recommendation</h4><div class="flex justify-around items-center"><div class="text-center"><p>User A likes:</p><p class="font-bold">📱, 💻</p></div><p class="text-2xl">+</p><div class="text-center"><p>User B likes:</p><p class="font-bold">📱, 💻, ⌚</p></div><p class="text-2xl">→</p><div class="text-center"><p>Recommend to A:</p><p class="font-bold text-blue-600 text-2xl">⌚</p></div></div></div>`
+    category: 'Web/Mobile', field: 'Rekayasa ML', title: 'Sistem Rekomendasi Produk',
+    description: 'Menyarankan produk kepada pengguna berdasarkan perilaku masa lalu mereka atau perilaku pengguna serupa.',
+    algorithm: 'Collaborative Filtering', formula: 'Similarity(A, B) = cos(θ)', dataset: 'Peringkat pengguna, riwayat pembelian',
+    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><h4 class="font-semibold mb-2">Contoh Rekomendasi</h4><div class="flex justify-around items-center"><div class="text-center"><p>Pengguna A suka:</p><p class="font-bold">📱, 💻</p></div><p class="text-2xl">+</p><div class="text-center"><p>Pengguna B suka:</p><p class="font-bold">📱, 💻, ⌚</p></div><p class="text-2xl">→</p><div class="text-center"><p>Rekomendasikan ke A:</p><p class="font-bold text-blue-600 text-2xl">⌚</p></div></div></div>`
   },
   {
-    category: 'Web/Mobile', field: 'ML Engineering', title: 'Intelligent Chatbot with NLP',
-    description: 'Automated customer service using advanced language models like BERT or GPT to understand and respond to user queries.',
-    algorithm: 'Transformers (BERT/GPT)', formula: 'Attention(Q, K, V)', dataset: 'Conversation logs, FAQs',
-    customChart: `<div class="text-sm p-4 bg-gray-50 rounded-lg h-[200px] flex flex-col justify-center"><p><span class="font-bold text-blue-600">User:</span> How do I reset my password?</p><p class="mt-2"><span class="font-bold text-green-600">Bot:</span> You can reset your password by going to "Settings" > "Security" and clicking "Reset Password".</p></div>`
+    category: 'Web/Mobile', field: 'Rekayasa ML', title: 'Chatbot Cerdas dengan NLP',
+    description: 'Layanan pelanggan otomatis menggunakan model bahasa canggih seperti BERT atau GPT untuk memahami dan menanggapi pertanyaan pengguna.',
+    algorithm: 'Transformers (BERT/GPT)', formula: 'Attention(Q, K, V)', dataset: 'Log percakapan, FAQ',
+    customChart: `<div class="text-sm p-4 bg-gray-50 rounded-lg h-[200px] flex flex-col justify-center"><p><span class="font-bold text-blue-600">Pengguna:</span> Bagaimana cara mereset kata sandi saya?</p><p class="mt-2"><span class="font-bold text-green-600">Bot:</span> Anda dapat mereset kata sandi dengan membuka "Pengaturan" > "Keamanan" dan mengklik "Reset Kata Sandi".</p></div>`
   },
   {
-    category: 'Web/Mobile', field: 'ML Engineering', title: 'Image Recognition',
-    description: 'Automatically identify and label objects in user-uploaded images, such as plant species or food items.',
-    algorithm: 'Convolutional Neural Network (CNN)', formula: 'Convolution + Pooling Layers', dataset: 'ImageNet, Custom Image Sets',
-    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=120&fit=crop" alt="cat" class="mx-auto rounded-lg mb-2" /><p>Prediction: <span class="font-bold text-blue-600">Cat (94% confidence)</span></p></div>`
+    category: 'Web/Mobile', field: 'Rekayasa ML', title: 'Pengenalan Gambar',
+    description: 'Secara otomatis mengidentifikasi dan memberi label objek dalam gambar yang diunggah pengguna, seperti spesies tanaman atau item makanan.',
+    algorithm: 'Convolutional Neural Network (CNN)', formula: 'Convolution + Pooling Layers', dataset: 'ImageNet, Set Gambar Kustom',
+    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=120&fit=crop" alt="cat" class="mx-auto rounded-lg mb-2" /><p>Prediksi: <span class="font-bold text-blue-600">Kucing (keyakinan 94%)</span></p></div>`
   },
 ];
 </script>

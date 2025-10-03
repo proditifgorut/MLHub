@@ -66,14 +66,14 @@ const isMenuOpen = ref(false);
 const route = useRoute();
 
 const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/data-mining', label: 'Data Mining' },
-  { path: '/data-science', label: 'Data Science' },
-  { path: '/data-analysis', label: 'Data Analysis' },
-  { path: '/projects', label: 'Projects' },
-  { path: '/predictions', label: 'Predictions' },
+  { path: '/', label: 'Beranda' },
+  { path: '/data-mining', label: 'Penambangan Data' },
+  { path: '/data-science', label: 'Sains Data' },
+  { path: '/data-analysis', label: 'Analisis Data' },
+  { path: '/projects', label: 'Proyek' },
+  { path: '/predictions', label: 'Prediksi' },
   { path: '/chatbot', label: 'Chatbot' },
-  { path: '/about', label: 'About' },
+  { path: '/about', label: 'Tentang' },
 ];
 </script>
 

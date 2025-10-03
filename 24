@@ -2,8 +2,8 @@
   <div class="min-h-screen py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">AI Assistant</h1>
-        <p class="text-gray-600">Get intelligent help for your machine learning projects</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Asisten AI</h1>
+        <p class="text-gray-600">Dapatkan bantuan cerdas untuk proyek machine learning Anda</p>
       </div>
 
       <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" style="height: 75vh;">
@@ -11,8 +11,8 @@
           <div class="flex items-center space-x-2">
             <Bot class="h-6 w-6" />
             <div>
-              <h3 class="font-semibold">ML Assistant</h3>
-              <p class="text-sm text-blue-100">Online • Ready to help</p>
+              <h3 class="font-semibold">Asisten ML</h3>
+              <p class="text-sm text-blue-100">Online • Siap membantu</p>
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@
         </div>
 
         <div class="border-t border-gray-200 p-4">
-          <p class="text-sm text-gray-600 mb-2">Quick actions:</p>
+          <p class="text-sm text-gray-600 mb-2">Tindakan cepat:</p>
           <div class="flex flex-wrap gap-2">
             <button
               v-for="action in quickActions"
@@ -78,7 +78,7 @@
               <textarea
                 v-model="inputText"
                 @keypress.enter.prevent="handleSendMessage"
-                placeholder="Ask anything about machine learning..."
+                placeholder="Tanyakan apa saja tentang machine learning..."
                 class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows="1"
               ></textarea>
@@ -114,7 +114,7 @@ interface Message {
 const messages = ref<Message[]>([
   {
     id: '1',
-    text: 'Hello! I am your AI assistant. I can help you with machine learning questions, data analysis, and provide insights on your projects. How can I help you today?',
+    text: 'Halo! Saya adalah asisten AI Anda. Saya dapat membantu Anda dengan pertanyaan machine learning, analisis data, dan memberikan wawasan tentang proyek Anda. Ada yang bisa saya bantu hari ini?',
     isBot: true,
     timestamp: new Date(),
   },
@@ -134,12 +134,12 @@ onUpdated(() => {
 });
 
 const botResponses = [
-  "That's a great question about machine learning! Based on your data, I'd suggest starting with a linear regression model to establish a baseline.",
-  "For your dataset, you might want to consider data preprocessing steps like handling missing values and feature scaling before training your model.",
-  "The accuracy metric you're seeing suggests your model is performing well. You might also want to look at precision and recall for a more complete picture.",
-  "For image classification, I'd recommend trying a convolutional neural network (CNN) or using a pre-trained model like ResNet for better results.",
-  "Your clustering results look interesting! K-means is working well here, but you might also want to try DBSCAN for comparison.",
-  "Based on the trends in your data, I can see some clear patterns. Would you like me to suggest some visualization techniques to understand them better?",
+  "Itu pertanyaan yang bagus tentang machine learning! Berdasarkan data Anda, saya sarankan memulai dengan model regresi linier untuk membuat baseline.",
+  "Untuk set data Anda, Anda mungkin ingin mempertimbangkan langkah-langkah pra-pemrosesan data seperti menangani nilai yang hilang dan penskalaan fitur sebelum melatih model Anda.",
+  "Metrik akurasi yang Anda lihat menunjukkan model Anda berkinerja baik. Anda mungkin juga ingin melihat presisi dan recall untuk gambaran yang lebih lengkap.",
+  "Untuk klasifikasi gambar, saya sarankan mencoba jaringan saraf konvolusional (CNN) atau menggunakan model pra-terlatih seperti ResNet untuk hasil yang lebih baik.",
+  "Hasil pengelompokan Anda terlihat menarik! K-means bekerja dengan baik di sini, tetapi Anda mungkin juga ingin mencoba DBSCAN sebagai perbandingan.",
+  "Berdasarkan tren dalam data Anda, saya dapat melihat beberapa pola yang jelas. Apakah Anda ingin saya menyarankan beberapa teknik visualisasi untuk memahaminya lebih baik?",
 ];
 
 const handleSendMessage = () => {
@@ -169,10 +169,10 @@ const handleSendMessage = () => {
 };
 
 const quickActions = [
-  'Explain ML basics',
-  'Help with data preprocessing',
-  'Suggest a model',
-  'Interpret my results',
+  'Jelaskan dasar-dasar ML',
+  'Bantu dengan pra-pemrosesan data',
+  'Sarankan sebuah model',
+  'Interpretasikan hasil saya',
 ];
 </script>
 

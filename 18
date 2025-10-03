@@ -2,16 +2,16 @@
   <transition name="fade-transform" appear>
     <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
       <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">No Data Uploaded</h3>
-      <p class="text-gray-600">Please upload a dataset first to visualize your data.</p>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Tidak Ada Data yang Diunggah</h3>
+      <p class="text-gray-600">Silakan unggah set data terlebih dahulu untuk memvisualisasikan data Anda.</p>
     </div>
     
     <div v-else class="space-y-6">
       <div class="bg-white rounded-xl shadow-lg p-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-semibold text-gray-900">Data Visualization</h2>
+          <h2 class="text-2xl font-semibold text-gray-900">Visualisasi Data</h2>
           <span v-if="isProcessed" class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-            Data Processed
+            Data Diproses
           </span>
         </div>
         <div class="flex flex-wrap gap-2">
@@ -40,56 +40,56 @@
 
       <div class="grid md:grid-cols-3 gap-6">
         <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Dataset Info</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Info Set Data</h3>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">Rows:</span>
+              <span class="text-gray-600">Baris:</span>
               <span class="font-medium">1,250</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Columns:</span>
+              <span class="text-gray-600">Kolom:</span>
               <span class="font-medium">8</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Size:</span>
+              <span class="text-gray-600">Ukuran:</span>
               <span class="font-medium">2.4 MB</span>
             </div>
           </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Data Quality</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Kualitas Data</h3>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">Missing Values:</span>
+              <span class="text-gray-600">Nilai Hilang:</span>
               <span :class="['font-medium', isProcessed ? 'text-green-600' : 'text-yellow-600']">
                 {{ isProcessed ? '0%' : '2.3%' }}
               </span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Duplicates:</span>
+              <span class="text-gray-600">Duplikat:</span>
               <span class="font-medium text-green-600">0%</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Outliers:</span>
+              <span class="text-gray-600">Pencilan:</span>
               <span class="font-medium text-red-600">1.8%</span>
             </div>
           </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Correlations</h3>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Korelasi</h3>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">Price vs Sales:</span>
+              <span class="text-gray-600">Harga vs Penjualan:</span>
               <span class="font-medium">0.76</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Rating vs Reviews:</span>
+              <span class="text-gray-600">Peringkat vs Ulasan:</span>
               <span class="font-medium">0.82</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">Age vs Income:</span>
+              <span class="text-gray-600">Usia vs Pendapatan:</span>
               <span class="font-medium">0.45</span>
             </div>
           </div>
@@ -119,10 +119,10 @@ defineProps<{
 const activeChart = ref('bar');
 
 const charts = [
-  { id: 'bar', label: 'Bar Chart', icon: BarChart3 },
-  { id: 'line', label: 'Line Chart', icon: LineChart },
-  { id: 'pie', label: 'Pie Chart', icon: PieChart },
-  { id: 'scatter', label: 'Scatter Plot', icon: TrendingUp },
+  { id: 'bar', label: 'Diagram Batang', icon: BarChart3 },
+  { id: 'line', label: 'Diagram Garis', icon: LineChart },
+  { id: 'pie', label: 'Diagram Lingkaran', icon: PieChart },
+  { id: 'scatter', label: 'Plot Sebar', icon: TrendingUp },
 ];
 
 const chartOption = computed(() => {
@@ -135,42 +135,42 @@ const chartOption = computed(() => {
       }));
       return {
         tooltip: { trigger: 'axis' },
-        legend: { data: ['Value', 'Sales'] },
+        legend: { data: ['Nilai', 'Penjualan'] },
         xAxis: { type: 'category', data: barData.map(d => d.name), axisLabel: { rotate: -45, interval: 0 } },
         yAxis: { type: 'value' },
         series: [
-          { name: 'Value', type: 'bar', data: barData.map(d => d.value), itemStyle: { color: '#3B82F6' } },
-          { name: 'Sales', type: 'bar', data: barData.map(d => d.sales), itemStyle: { color: '#82ca9d' } },
+          { name: 'Nilai', type: 'bar', data: barData.map(d => d.value), itemStyle: { color: '#3B82F6' } },
+          { name: 'Penjualan', type: 'bar', data: barData.map(d => d.sales), itemStyle: { color: '#82ca9d' } },
         ],
       };
     case 'line':
       const lineData = Array.from({ length: 12 }, (_, i) => ({
-        month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+        month: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][i],
         revenue: faker.number.int({ min: 30000, max: 80000 }),
         users: faker.number.int({ min: 1000, max: 5000 }),
       }));
       return {
         tooltip: { trigger: 'axis' },
-        legend: { data: ['Revenue', 'Active Users'] },
+        legend: { data: ['Pendapatan', 'Pengguna Aktif'] },
         xAxis: { type: 'category', boundaryGap: false, data: lineData.map(d => d.month) },
         yAxis: { type: 'value' },
         series: [
-          { name: 'Revenue', type: 'line', smooth: true, data: lineData.map(d => d.revenue), itemStyle: { color: '#3B82F6' } },
-          { name: 'Active Users', type: 'line', smooth: true, data: lineData.map(d => d.users), itemStyle: { color: '#10B981' } },
+          { name: 'Pendapatan', type: 'line', smooth: true, data: lineData.map(d => d.revenue), itemStyle: { color: '#3B82F6' } },
+          { name: 'Pengguna Aktif', type: 'line', smooth: true, data: lineData.map(d => d.users), itemStyle: { color: '#10B981' } },
         ],
       };
     case 'pie':
       const pieData = [
-        { name: 'Technology', value: 400, itemStyle: { color: '#3B82F6' } },
-        { name: 'Health', value: 300, itemStyle: { color: '#10B981' } },
-        { name: 'Finance', value: 300, itemStyle: { color: '#F59E0B' } },
-        { name: 'Education', value: 200, itemStyle: { color: '#EF4444' } },
+        { name: 'Teknologi', value: 400, itemStyle: { color: '#3B82F6' } },
+        { name: 'Kesehatan', value: 300, itemStyle: { color: '#10B981' } },
+        { name: 'Keuangan', value: 300, itemStyle: { color: '#F59E0B' } },
+        { name: 'Pendidikan', value: 200, itemStyle: { color: '#EF4444' } },
       ];
       return {
         tooltip: { trigger: 'item' },
         legend: { orient: 'vertical', left: 'left' },
         series: [{
-          name: 'Sector',
+          name: 'Sektor',
           type: 'pie',
           radius: '70%',
           data: pieData,
@@ -181,10 +181,10 @@ const chartOption = computed(() => {
       const scatterData = Array.from({ length: 20 }, () => [faker.number.int({ min: 20, max: 100 }), faker.number.int({ min: 20, max: 100 })]);
       return {
         tooltip: { trigger: 'item' },
-        xAxis: { name: 'Feature X' },
-        yAxis: { name: 'Feature Y' },
+        xAxis: { name: 'Fitur X' },
+        yAxis: { name: 'Fitur Y' },
         series: [{
-          name: 'Dataset Points',
+          name: 'Poin Set Data',
           symbolSize: 10,
           data: scatterData,
           type: 'scatter',

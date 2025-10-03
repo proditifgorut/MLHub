@@ -2,30 +2,30 @@
   <transition name="fade-transform" appear>
     <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
       <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">No Data Uploaded</h3>
-      <p class="text-gray-600">Please go to the 'Upload' tab to upload a dataset first.</p>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Tidak Ada Data yang Diunggah</h3>
+      <p class="text-gray-600">Silakan buka tab 'Unggah' untuk mengunggah set data terlebih dahulu.</p>
     </div>
     
     <div v-else class="bg-white rounded-xl shadow-lg p-8">
-      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Data Preprocessing</h2>
-      <p class="text-gray-600 mb-6">Clean and prepare your data for analysis and model training. This is a crucial step for any data analyst or data scientist.</p>
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Pra-pemrosesan Data</h2>
+      <p class="text-gray-600 mb-6">Bersihkan dan siapkan data Anda untuk analisis dan pelatihan model. Ini adalah langkah penting bagi setiap analis data atau ilmuwan data.</p>
       
       <transition name="fade-transform" mode="out-in">
         <div v-if="processingDone" class="text-center py-8">
           <CheckCircle class="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Complete!</h3>
-          <p class="text-gray-600 mb-6">Your data has been cleaned and is ready for the next step.</p>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Pemrosesan Selesai!</h3>
+          <p class="text-gray-600 mb-6">Data Anda telah dibersihkan dan siap untuk langkah selanjutnya.</p>
           
           <div class="bg-gray-50 rounded-lg p-4 max-w-md mx-auto text-left space-y-2">
-            <h4 class="font-semibold text-gray-800">Processing Summary:</h4>
+            <h4 class="font-semibold text-gray-800">Ringkasan Pemrosesan:</h4>
             <p class="text-sm text-gray-700">
-              <span class="font-medium text-red-600">{{ summary.rowsRemoved }} rows</span> with missing values were removed.
+              <span class="font-medium text-red-600">{{ summary.rowsRemoved }} baris</span> dengan nilai yang hilang telah dihapus.
             </p>
             <p class="text-sm text-gray-700">
-              <span class="font-medium text-blue-600">{{ summary.columnsScaled }} numerical columns</span> were scaled using {{ processingOptions.featureScaling }}.
+              <span class="font-medium text-blue-600">{{ summary.columnsScaled }} kolom numerik</span> diskalakan menggunakan {{ processingOptions.featureScaling }}.
             </p>
             <p class="text-sm text-gray-700">
-              <span class="font-medium text-green-600">{{ summary.columnsEncoded }} categorical columns</span> were encoded using {{ processingOptions.encoding }}.
+              <span class="font-medium text-green-600">{{ summary.columnsEncoded }} kolom kategorikal</span> dikodekan menggunakan {{ processingOptions.encoding }}.
             </p>
           </div>
 
@@ -33,7 +33,7 @@
             @click="processingDone = false"
             class="mt-6 text-blue-600 font-semibold hover:text-blue-700"
           >
-            Reprocess Data
+            Proses Ulang Data
           </button>
         </div>
 
@@ -42,40 +42,40 @@
             <div class="p-6 bg-gray-50 rounded-lg">
               <div class="flex items-center mb-3">
                 <Trash2 class="h-6 w-6 text-red-500 mr-3" />
-                <h3 class="text-lg font-semibold text-gray-800">Missing Values</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Nilai yang Hilang</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-4">Choose how to handle rows with missing data. Essential for data quality.</p>
+              <p class="text-sm text-gray-600 mb-4">Pilih cara menangani baris dengan data yang hilang. Penting untuk kualitas data.</p>
               <select
                 v-model="processingOptions.missingValues"
                 class="w-full p-2 border border-gray-300 rounded-lg"
               >
-                <option value="remove">Remove Rows</option>
-                <option value="fill-mean">Fill with Mean</option>
-                <option value="fill-median">Fill with Median</option>
+                <option value="remove">Hapus Baris</option>
+                <option value="fill-mean">Isi dengan Rata-rata</option>
+                <option value="fill-median">Isi dengan Median</option>
               </select>
             </div>
 
             <div class="p-6 bg-gray-50 rounded-lg">
               <div class="flex items-center mb-3">
                 <Scale class="h-6 w-6 text-blue-500 mr-3" />
-                <h3 class="text-lg font-semibold text-gray-800">Feature Scaling</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Penskalaan Fitur</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-4">Normalize numerical features to improve model performance.</p>
+              <p class="text-sm text-gray-600 mb-4">Normalisasikan fitur numerik untuk meningkatkan kinerja model.</p>
               <select
                 v-model="processingOptions.featureScaling"
                 class="w-full p-2 border border-gray-300 rounded-lg"
               >
-                <option value="standardization">Standardization (Z-score)</option>
-                <option value="normalization">Normalization (Min-Max)</option>
+                <option value="standardization">Standardisasi (Z-score)</option>
+                <option value="normalization">Normalisasi (Min-Max)</option>
               </select>
             </div>
 
             <div class="p-6 bg-gray-50 rounded-lg">
               <div class="flex items-center mb-3">
                 <Binary class="h-6 w-6 text-green-500 mr-3" />
-                <h3 class="text-lg font-semibold text-gray-800">Categorical Encoding</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Pengkodean Kategorikal</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-4">Convert text categories into machine-readable numerical formats.</p>
+              <p class="text-sm text-gray-600 mb-4">Ubah kategori teks menjadi format numerik yang dapat dibaca mesin.</p>
               <select
                 v-model="processingOptions.encoding"
                 class="w-full p-2 border border-gray-300 rounded-lg"
@@ -94,11 +94,11 @@
             >
               <template v-if="isProcessing">
                 <Loader class="h-5 w-5 animate-spin" />
-                <span>Processing Data...</span>
+                <span>Memproses Data...</span>
               </template>
               <template v-else>
                 <SlidersHorizontal class="h-5 w-5" />
-                <span>Apply Processing</span>
+                <span>Terapkan Pemrosesan</span>
               </template>
             </button>
           </div>

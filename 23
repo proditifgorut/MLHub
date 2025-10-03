@@ -2,9 +2,9 @@
   <div class="min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">AI Predictions</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Prediksi AI</h1>
         <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Experience the power of machine learning with our advanced prediction models
+          Rasakan kekuatan machine learning dengan model prediksi canggih kami
         </p>
       </div>
 
@@ -32,22 +32,22 @@
       </transition>
 
       <div class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <h2 class="text-2xl font-bold text-center mb-8">Platform Statistics</h2>
+        <h2 class="text-2xl font-bold text-center mb-8">Statistik Platform</h2>
         <div class="grid md:grid-cols-3 gap-8 text-center">
           <div>
             <Brain class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">500+</div>
-            <div class="text-blue-100">Models Trained</div>
+            <div class="text-blue-100">Model Dilatih</div>
           </div>
           <div>
             <Users class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">10K+</div>
-            <div class="text-blue-100">Active Users</div>
+            <div class="text-blue-100">Pengguna Aktif</div>
           </div>
           <div>
             <Zap class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">1M+</div>
-            <div class="text-blue-100">Predictions Made</div>
+            <div class="text-blue-100">Prediksi Dibuat</div>
           </div>
         </div>
       </div>
@@ -66,13 +66,13 @@ const activeFeature = ref('image');
 const features = [
   {
     id: 'image',
-    title: 'Image Recognition',
+    title: 'Pengenalan Gambar',
     icon: Camera,
     component: shallowRef(ImagePrediction),
   },
   {
     id: 'recommendation',
-    title: 'Product Recommendation',
+    title: 'Rekomendasi Produk',
     icon: TrendingUp,
     component: shallowRef(RecommendationSystem),
   },
