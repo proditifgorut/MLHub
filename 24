@@ -2,36 +2,35 @@
   <div class="min-h-screen py-8">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Asisten AI</h1>
-        <p class="text-gray-600">Dapatkan bantuan cerdas untuk proyek machine learning Anda</p>
+        <h1 class="text-3xl font-bold text-white mb-2">Asisten AI</h1>
+        <p class="text-slate-400">Dapatkan bantuan cerdas untuk proyek machine learning Anda.</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" style="height: 75vh;">
-        <div class="bg-blue-600 text-white p-4">
-          <div class="flex items-center space-x-2">
-            <Bot class="h-6 w-6" />
+      <div class="bg-slate-850 border border-slate-800 rounded-xl shadow-lg overflow-hidden flex flex-col" style="height: 75vh;">
+        <div class="bg-slate-800 p-4 border-b border-slate-700">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <Bot class="h-8 w-8 text-blue-400" />
+              <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-slate-800"></span>
+            </div>
             <div>
-              <h3 class="font-semibold">Asisten ML</h3>
-              <p class="text-sm text-blue-100">Online • Siap membantu</p>
+              <h3 class="font-semibold text-white">Asisten ML</h3>
+              <p class="text-sm text-slate-400">Online</p>
             </div>
           </div>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 space-y-4" ref="messagesContainer">
           <transition-group name="message">
-            <div
-              v-for="message in messages"
-              :key="message.id"
-              :class="['flex', message.isBot ? 'justify-start' : 'justify-end']"
-            >
-              <div :class="['flex items-start space-x-2 max-w-xs lg:max-w-md', message.isBot ? 'flex-row' : 'flex-row-reverse space-x-reverse']">
-                <div :class="['w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', message.isBot ? 'bg-blue-100' : 'bg-gray-100']">
-                  <Bot v-if="message.isBot" class="h-4 w-4 text-blue-600" />
-                  <User v-else class="h-4 w-4 text-gray-600" />
+            <div v-for="message in messages" :key="message.id" :class="['flex', message.isBot ? 'justify-start' : 'justify-end']">
+              <div :class="['flex items-start space-x-3 max-w-xs lg:max-w-md', message.isBot ? 'flex-row' : 'flex-row-reverse space-x-reverse']">
+                <div :class="['w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', message.isBot ? 'bg-slate-700' : 'bg-blue-600']">
+                  <Bot v-if="message.isBot" class="h-4 w-4 text-blue-300" />
+                  <User v-else class="h-4 w-4 text-white" />
                 </div>
-                <div :class="['rounded-lg p-3', message.isBot ? 'bg-gray-100 text-gray-900' : 'bg-blue-600 text-white']">
+                <div :class="['rounded-lg p-3', message.isBot ? 'bg-slate-800 text-slate-300' : 'bg-blue-600 text-white']">
                   <p class="text-sm">{{ message.text }}</p>
-                  <p :class="['text-xs mt-1', message.isBot ? 'text-gray-500' : 'text-blue-100']">
+                  <p :class="['text-xs mt-1 text-right', message.isBot ? 'text-slate-500' : 'text-blue-200']">
                     {{ message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
                   </p>
                 </div>
@@ -40,57 +39,31 @@
           </transition-group>
 
           <div v-if="isTyping" class="flex justify-start">
-            <div class="flex items-start space-x-2">
-              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <Bot class="h-4 w-4 text-blue-600" />
-              </div>
-              <div class="bg-gray-100 rounded-lg p-3">
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0"><Bot class="h-4 w-4 text-blue-300" /></div>
+              <div class="bg-slate-800 rounded-lg p-3">
                 <div class="flex space-x-1">
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                  <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></div>
+                  <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                  <div class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="border-t border-gray-200 p-4">
-          <p class="text-sm text-gray-600 mb-2">Tindakan cepat:</p>
+        <div class="border-t border-slate-800 p-4">
           <div class="flex flex-wrap gap-2">
-            <button
-              v-for="action in quickActions"
-              :key="action"
-              @click="inputText = action"
-              class="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
-            >
+            <button v-for="action in quickActions" :key="action" @click="sendQuickAction(action)" class="text-sm bg-slate-800 text-slate-300 px-3 py-1 rounded-full hover:bg-slate-700 transition-colors border border-slate-700">
               {{ action }}
             </button>
           </div>
         </div>
 
-        <div class="border-t border-gray-200 p-4">
+        <div class="border-t border-slate-800 p-4 bg-slate-800">
           <div class="flex items-center space-x-2">
-            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Paperclip class="h-5 w-5" />
-            </button>
-            <div class="flex-1 relative">
-              <textarea
-                v-model="inputText"
-                @keypress.enter.prevent="handleSendMessage"
-                placeholder="Tanyakan apa saja tentang machine learning..."
-                class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows="1"
-              ></textarea>
-            </div>
-            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Mic class="h-5 w-5" />
-            </button>
-            <button
-              @click="handleSendMessage"
-              :disabled="!inputText.trim()"
-              class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
+            <textarea v-model="inputText" @keypress.enter.prevent="handleSendMessage" placeholder="Tanyakan apa saja..." class="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white" rows="1"></textarea>
+            <button @click="handleSendMessage" :disabled="!inputText.trim()" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
               <Send class="h-5 w-5" />
             </button>
           </div>
@@ -101,89 +74,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onUpdated } from 'vue';
-import { Send, Bot, User, Mic, Paperclip } from 'lucide-vue-next';
+import { ref, onUpdated } from 'vue';
+import { Send, Bot, User } from 'lucide-vue-next';
 
-interface Message {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
+interface Message { id: string; text: string; isBot: boolean; timestamp: Date; }
 
 const messages = ref<Message[]>([
-  {
-    id: '1',
-    text: 'Halo! Saya adalah asisten AI Anda. Saya dapat membantu Anda dengan pertanyaan machine learning, analisis data, dan memberikan wawasan tentang proyek Anda. Ada yang bisa saya bantu hari ini?',
-    isBot: true,
-    timestamp: new Date(),
-  },
+  { id: '1', text: 'Halo! Saya adalah asisten AI Anda. Ada yang bisa saya bantu hari ini?', isBot: true, timestamp: new Date() },
 ]);
 const inputText = ref('');
 const isTyping = ref(false);
 const messagesContainer = ref<HTMLDivElement | null>(null);
 
-const scrollToBottom = () => {
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-  }
+const scrollToBottom = () => { messagesContainer.value?.scrollTo({ top: messagesContainer.value.scrollHeight, behavior: 'smooth' }); };
+onUpdated(scrollToBottom);
+
+const botResponses: Record<string, string> = {
+  default: "Itu pertanyaan yang menarik. Berdasarkan data Anda, saya sarankan memulai dengan model regresi linier untuk membuat baseline.",
+  'Jelaskan dasar-dasar ML': "Tentu! Machine Learning (ML) adalah bidang AI yang memungkinkan sistem belajar dari data. Tiga jenis utama adalah Supervised Learning (belajar dari data berlabel), Unsupervised Learning (menemukan pola dalam data tak berlabel), dan Reinforcement Learning (belajar melalui trial and error).",
+  'Bantu dengan pra-pemrosesan data': "Pra-pemrosesan sangat penting! Langkah umum termasuk menangani nilai yang hilang (menghapus atau mengisi), penskalaan fitur (normalisasi atau standardisasi), dan mengkodekan variabel kategorikal (one-hot atau label encoding). Mana yang ingin Anda diskusikan lebih lanjut?",
+  'Sarankan sebuah model': "Tentu, itu tergantung pada masalah Anda. Untuk memprediksi nilai kontinu (seperti harga rumah), coba Regresi Linier. Untuk mengklasifikasikan data ke dalam grup (seperti spam vs bukan spam), coba Regresi Logistik atau Pohon Keputusan. Untuk mengelompokkan data serupa, K-Means adalah titik awal yang bagus.",
+  'Interpretasikan hasil saya': "Untuk menginterpretasikan hasil, lihat metrik evaluasi. Untuk klasifikasi, akurasi, presisi, recall, dan F1-score adalah kunci. Untuk regresi, periksa R-squared dan Mean Squared Error (MSE). Metrik mana yang Anda lihat?",
 };
 
-onUpdated(() => {
-  scrollToBottom();
-});
-
-const botResponses = [
-  "Itu pertanyaan yang bagus tentang machine learning! Berdasarkan data Anda, saya sarankan memulai dengan model regresi linier untuk membuat baseline.",
-  "Untuk set data Anda, Anda mungkin ingin mempertimbangkan langkah-langkah pra-pemrosesan data seperti menangani nilai yang hilang dan penskalaan fitur sebelum melatih model Anda.",
-  "Metrik akurasi yang Anda lihat menunjukkan model Anda berkinerja baik. Anda mungkin juga ingin melihat presisi dan recall untuk gambaran yang lebih lengkap.",
-  "Untuk klasifikasi gambar, saya sarankan mencoba jaringan saraf konvolusional (CNN) atau menggunakan model pra-terlatih seperti ResNet untuk hasil yang lebih baik.",
-  "Hasil pengelompokan Anda terlihat menarik! K-means bekerja dengan baik di sini, tetapi Anda mungkin juga ingin mencoba DBSCAN sebagai perbandingan.",
-  "Berdasarkan tren dalam data Anda, saya dapat melihat beberapa pola yang jelas. Apakah Anda ingin saya menyarankan beberapa teknik visualisasi untuk memahaminya lebih baik?",
-];
-
-const handleSendMessage = () => {
-  if (!inputText.value.trim()) return;
-
-  const userMessage: Message = {
-    id: Date.now().toString(),
-    text: inputText.value,
-    isBot: false,
-    timestamp: new Date(),
-  };
-
-  messages.value.push(userMessage);
-  inputText.value = '';
+const sendMessage = (text: string) => {
+  if (!text.trim()) return;
+  messages.value.push({ id: Date.now().toString(), text, isBot: false, timestamp: new Date() });
   isTyping.value = true;
-
+  
   setTimeout(() => {
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: botResponses[Math.floor(Math.random() * botResponses.length)],
-      isBot: true,
-      timestamp: new Date(),
-    };
-    messages.value.push(botMessage);
+    const responseText = botResponses[text] || botResponses.default;
+    messages.value.push({ id: (Date.now() + 1).toString(), text: responseText, isBot: true, timestamp: new Date() });
     isTyping.value = false;
   }, 1500);
 };
 
-const quickActions = [
-  'Jelaskan dasar-dasar ML',
-  'Bantu dengan pra-pemrosesan data',
-  'Sarankan sebuah model',
-  'Interpretasikan hasil saya',
-];
+const handleSendMessage = () => {
+  sendMessage(inputText.value);
+  inputText.value = '';
+};
+
+const sendQuickAction = (action: string) => {
+  sendMessage(action);
+};
+
+const quickActions = ['Jelaskan dasar-dasar ML', 'Bantu dengan pra-pemrosesan data', 'Sarankan sebuah model', 'Interpretasikan hasil saya'];
 </script>
 
 <style scoped>
-.message-enter-active,
-.message-leave-active {
-  transition: all 0.5s ease;
-}
-.message-enter-from,
-.message-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
+.message-enter-active, .message-leave-active { transition: all 0.5s ease; }
+.message-enter-from, .message-leave-to { opacity: 0; transform: translateY(20px); }
+textarea { scrollbar-width: none; }
+textarea::-webkit-scrollbar { display: none; }
 </style>

@@ -2,14 +2,14 @@
   <div class="min-h-screen py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Prediksi AI</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Rasakan kekuatan machine learning dengan model prediksi canggih kami
+        <h1 class="text-4xl font-bold text-white mb-4">Prediksi AI</h1>
+        <p class="text-xl text-slate-400 max-w-3xl mx-auto">
+          Rasakan kekuatan machine learning dengan model prediksi canggih kami.
         </p>
       </div>
 
       <div class="flex justify-center mb-8">
-        <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        <div class="flex space-x-1 bg-slate-800 p-1 rounded-lg border border-slate-700">
           <button
             v-for="feature in features"
             :key="feature.id"
@@ -17,8 +17,8 @@
             :class="[
               'flex items-center space-x-2 px-6 py-3 rounded-md font-medium transition-colors',
               activeFeature === feature.id
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-slate-700 text-white shadow-sm'
+                : 'text-slate-400 hover:text-white'
             ]"
           >
             <component :is="feature.icon" class="h-5 w-5" />
@@ -31,23 +31,23 @@
         <component :is="activeComponent" class="mb-12" />
       </transition>
 
-      <div class="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+      <div class="bg-gradient-to-br from-blue-600/50 to-purple-600/50 rounded-2xl p-8 text-white border border-blue-500/30">
         <h2 class="text-2xl font-bold text-center mb-8">Statistik Platform</h2>
         <div class="grid md:grid-cols-3 gap-8 text-center">
           <div>
-            <Brain class="h-8 w-8 mx-auto mb-2" />
+            <BrainCircuit class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">500+</div>
-            <div class="text-blue-100">Model Dilatih</div>
+            <div class="text-blue-200">Model Dilatih</div>
           </div>
           <div>
             <Users class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">10K+</div>
-            <div class="text-blue-100">Pengguna Aktif</div>
+            <div class="text-blue-200">Pengguna Aktif</div>
           </div>
           <div>
             <Zap class="h-8 w-8 mx-auto mb-2" />
             <div class="text-3xl font-bold mb-1">1M+</div>
-            <div class="text-blue-100">Prediksi Dibuat</div>
+            <div class="text-blue-200">Prediksi Dibuat</div>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@
 
 <script setup lang="ts">
 import { ref, computed, shallowRef } from 'vue';
-import { Brain, Camera, TrendingUp, Users, Zap } from 'lucide-vue-next';
+import { BrainCircuit, Camera, TrendingUp, Users, Zap } from 'lucide-vue-next';
 import ImagePrediction from '../components/ImagePrediction.vue';
 import RecommendationSystem from '../components/RecommendationSystem.vue';
 

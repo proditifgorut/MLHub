@@ -1,33 +1,32 @@
 <template>
-  <header class="bg-white shadow-lg sticky top-0 z-50">
+  <header class="bg-slate-900/70 backdrop-blur-lg sticky top-0 z-50 border-b border-slate-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <router-link to="/" class="flex items-center space-x-2">
-          <Brain class="h-8 w-8 text-blue-600" />
-          <span class="text-xl font-bold text-gray-900">MLHub</span>
+          <BrainCircuit class="h-8 w-8 text-blue-500" />
+          <span class="text-xl font-bold text-slate-100">MLHub</span>
         </router-link>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex space-x-8">
+        <nav class="hidden md:flex items-center space-x-2">
           <router-link
             v-for="item in navItems"
             :key="item.path"
             :to="item.path"
-            :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              route.path === item.path
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-            ]"
+            class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white transition-colors relative group"
           >
             {{ item.label }}
+            <span :class="[
+              'absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-blue-500 w-0 group-hover:w-4/5 transition-all duration-300',
+              route.path === item.path ? 'w-4/5' : 'w-0'
+            ]"></span>
           </router-link>
         </nav>
 
         <!-- Mobile menu button -->
         <button
           @click="isMenuOpen = !isMenuOpen"
-          class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+          class="md:hidden p-2 rounded-md text-slate-400 hover:text-white"
         >
           <X v-if="isMenuOpen" class="h-6 w-6" />
           <Menu v-else class="h-6 w-6" />
@@ -36,7 +35,7 @@
 
       <!-- Mobile Navigation -->
       <transition name="slide-down">
-        <div v-if="isMenuOpen" class="md:hidden py-4 border-t border-gray-200">
+        <div v-if="isMenuOpen" class="md:hidden py-4">
           <router-link
             v-for="item in navItems"
             :key="item.path"
@@ -45,8 +44,8 @@
             :class="[
               'block px-3 py-2 rounded-md text-base font-medium transition-colors',
               route.path === item.path
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                ? 'text-blue-400 bg-slate-800'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800'
             ]"
           >
             {{ item.label }}
@@ -60,16 +59,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { Brain, Menu, X } from 'lucide-vue-next';
+import { BrainCircuit, Menu, X } from 'lucide-vue-next';
 
 const isMenuOpen = ref(false);
 const route = useRoute();
 
 const navItems = [
   { path: '/', label: 'Beranda' },
-  { path: '/data-mining', label: 'Penambangan Data' },
-  { path: '/data-science', label: 'Sains Data' },
-  { path: '/data-analysis', label: 'Analisis Data' },
+  { path: '/data-mining', label: 'Workspace' },
   { path: '/projects', label: 'Proyek' },
   { path: '/predictions', label: 'Prediksi' },
   { path: '/chatbot', label: 'Chatbot' },

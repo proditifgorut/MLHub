@@ -1,28 +1,30 @@
 <template>
-  <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
-    <div class="p-6 flex-grow">
-      <div class="flex justify-between items-start mb-4">
-        <h3 class="text-xl font-bold text-gray-900 pr-4">{{ project.title }}</h3>
-        <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
-          <component :is="config.icon" class="h-3 w-3 mr-1" />
-          {{ project.field }}
-        </span>
-      </div>
-      <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
-      
-      <div class="space-y-3 text-sm mb-4">
-        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Algoritma:</strong><span class="text-gray-800">{{ project.algorithm }}</span></div>
-        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Rumus/Konsep:</strong><code class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ project.formula }}</code></div>
-        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Set Data:</strong><span class="text-gray-800">{{ project.dataset }}</span></div>
-      </div>
-    </div>
-    <div class="p-6 pt-0">
-      <h4 class="text-md font-semibold text-gray-800 mb-2">Contoh Hasil / Perhitungan</h4>
-      <div class="bg-gray-50 p-2 rounded-lg">
-        <div v-if="project.chartType" class="h-[200px]">
-          <v-chart :option="project.chartOption" autoresize />
+  <div class="card-container h-full">
+    <div class="card-content h-full">
+      <div class="p-6 flex-grow flex flex-col">
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="text-xl font-bold text-slate-100 pr-4">{{ project.title }}</h3>
+          <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
+            <component :is="config.icon" class="h-3 w-3 mr-1" />
+            {{ project.field }}
+          </span>
         </div>
-        <div v-else v-html="project.customChart"></div>
+        <p class="text-slate-400 text-sm mb-4">{{ project.description }}</p>
+        
+        <div class="space-y-3 text-sm mb-4 mt-auto">
+          <div class="flex"><strong class="w-28 shrink-0 text-slate-500">Algoritma:</strong><span class="text-slate-300">{{ project.algorithm }}</span></div>
+          <div class="flex items-center"><strong class="w-28 shrink-0 text-slate-500">Konsep:</strong><code class="bg-slate-900/70 px-2 py-1 rounded text-slate-300 border border-slate-700">{{ project.formula }}</code></div>
+          <div class="flex"><strong class="w-28 shrink-0 text-slate-500">Set Data:</strong><span class="text-slate-300">{{ project.dataset }}</span></div>
+        </div>
+      </div>
+      <div class="p-6 pt-0">
+        <h4 class="text-md font-semibold text-slate-300 mb-2">Contoh Hasil</h4>
+        <div class="bg-slate-900/50 p-2 rounded-lg border border-slate-800">
+          <div v-if="project.chartType" class="h-[200px]">
+            <v-chart :option="project.chartOption" autoresize theme="dark" />
+          </div>
+          <div v-else v-html="project.customChart" class="text-slate-300"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -31,7 +33,10 @@
 <script setup lang="ts">
 import { computed, shallowRef } from 'vue';
 import { FlaskConical, ClipboardList, Code2 } from 'lucide-vue-next';
-import VChart from 'vue-echarts';
+import VChart, { THEME_KEY } from 'vue-echarts';
+import { provide } from 'vue';
+
+provide(THEME_KEY, 'dark');
 
 const props = defineProps<{
   project: {
@@ -48,12 +53,51 @@ const props = defineProps<{
 }>();
 
 const fieldConfig: Record<string, { icon: any; color: string }> = {
-  'Sains Data': { icon: shallowRef(FlaskConical), color: 'bg-indigo-100 text-indigo-800' },
-  'Analisis Data': { icon: shallowRef(ClipboardList), color: 'bg-green-100 text-green-800' },
-  'Rekayasa ML': { icon: shallowRef(Code2), color: 'bg-pink-100 text-pink-800' },
+  'Sains Data': { icon: shallowRef(FlaskConical), color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' },
+  'Analisis Data': { icon: shallowRef(ClipboardList), color: 'bg-green-500/20 text-green-300 border border-green-500/30' },
+  'Rekayasa ML': { icon: shallowRef(Code2), color: 'bg-pink-500/20 text-pink-300 border border-pink-500/30' },
 };
 
 const config = computed(() => {
   return fieldConfig[props.project.field as keyof typeof fieldConfig] || fieldConfig['Sains Data'];
 });
 </script>
+
+<style scoped>
+.card-container {
+  position: relative;
+  border-radius: 0.75rem; /* 12px */
+  background: transparent;
+  padding: 1px;
+  overflow: hidden;
+}
+
+.card-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 180deg at 50% 50%, #2563eb 0deg, #9333ea 180deg, #2563eb 360deg);
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  z-index: 0;
+}
+
+.card-container:hover::before {
+  opacity: 0.5;
+}
+
+.card-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: #1e293b; /* slate-800 */
+  border-radius: inherit;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1;
+}
+</style>

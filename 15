@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '../pages/Home.vue';
 import Workspace from '../pages/Workspace.vue';
 import Projects from '../pages/Projects.vue';
@@ -6,20 +6,27 @@ import Predictions from '../pages/Predictions.vue';
 import Chatbot from '../pages/Chatbot.vue';
 import About from '../pages/About.vue';
 
-const routes = [
-  { path: '/', component: Home },
-  { path: '/data-mining', component: Workspace },
-  { path: '/data-science', component: Workspace },
-  { path: '/data-analysis', component: Workspace },
-  { path: '/projects', component: Projects },
-  { path: '/predictions', component: Predictions },
-  { path: '/chatbot', component: Chatbot },
-  { path: '/about', component: About },
+const routes: Array<RouteRecordRaw> = [
+  { path: '/', name: 'Home', component: Home },
+  { path: '/data-mining', name: 'DataMining', component: Workspace, props: { type: 'mining' } },
+  { path: '/data-science', name: 'DataScience', component: Workspace, props: { type: 'science' } },
+  { path: '/data-analysis', name: 'DataAnalysis', component: Workspace, props: { type: 'analysis' } },
+  { path: '/projects', name: 'Projects', component: Projects },
+  { path: '/predictions', name: 'Predictions', component: Predictions },
+  { path: '/chatbot', name: 'Chatbot', component: Chatbot },
+  { path: '/about', name: 'About', component: About },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0 };
+    }
+  },
 });
 
 export default router;

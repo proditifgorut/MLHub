@@ -1,67 +1,74 @@
 <template>
-  <div class="min-h-screen">
+  <div class="overflow-x-hidden">
     <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h1 class="text-4xl md:text-6xl font-bold mb-6">
-            Platform untuk Analis Data
-            <span class="block text-yellow-300">& Ilmuwan Data</span>
-          </h1>
-          <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Memberdayakan para profesional data dan penggemar ML untuk mengunggah data, melatih model, dan mendapatkan wawasan secara instan.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <router-link
-              to="/data-analysis"
-              class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Mulai Analisis
-            </router-link>
-            <router-link
-              to="/predictions"
-              class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
-            >
-              Buat Prediksi
-            </router-link>
-          </div>
+    <section class="relative py-24 md:py-32 text-white text-center">
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-850 -z-10"></div>
+      <div class="absolute inset-0 overflow-hidden -z-10">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div class="w-[800px] h-[800px] bg-gradient-to-tr from-blue-600/50 via-purple-600/50 to-indigo-700/50 rounded-full animate-pulse blur-3xl"></div>
+        </div>
+      </div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 text-slate-100">
+          Platform Machine Learning
+          <span class="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mt-2">Untuk Generasi Berikutnya</span>
+        </h1>
+        <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto text-slate-300">
+          Berdayakan para profesional data dan penggemar ML untuk mengunggah data, melatih model, dan mendapatkan wawasan secara instan.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <router-link
+            to="/data-analysis"
+            class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-transform hover:scale-105"
+          >
+            Mulai Analisis
+          </router-link>
+          <router-link
+            to="/projects"
+            class="bg-slate-800/50 border border-slate-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-slate-700/70 transition-transform hover:scale-105"
+          >
+            Jelajahi Proyek
+          </router-link>
         </div>
       </div>
     </section>
 
     <!-- Stats Section -->
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-slate-850">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div v-for="stat in stats" :key="stat.label" class="text-center">
-            <component :is="stat.icon" class="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stat.value }}</div>
-            <div class="text-gray-600">{{ stat.label }}</div>
+            <component :is="stat.icon" class="h-8 w-8 text-blue-500 mx-auto mb-3" />
+            <div class="text-3xl font-bold text-white mb-1">{{ stat.value }}</div>
+            <div class="text-slate-400">{{ stat.label }}</div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-20 bg-gray-50">
+    <section class="py-20 bg-slate-900">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
             Fitur ML yang Kuat
           </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Semua yang Anda butuhkan untuk membangun, melatih, dan menerapkan model machine learning
+          <p class="text-xl text-slate-400 max-w-2xl mx-auto">
+            Semua yang Anda butuhkan untuk membangun, melatih, dan menerapkan model machine learning.
           </p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
-          <div v-for="feature in features" :key="feature.title" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <component :is="feature.icon" class="h-12 w-12 text-blue-600 mb-4" />
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ feature.title }}</h3>
-            <p class="text-gray-600 mb-6">{{ feature.description }}</p>
+          <div v-for="feature in features" :key="feature.title" class="bg-slate-850 p-8 rounded-xl border border-slate-800 hover:border-blue-500/50 transition-colors duration-300">
+            <div class="bg-slate-900 inline-flex p-3 rounded-lg mb-6 border border-slate-800">
+              <component :is="feature.icon" class="h-8 w-8 text-blue-500" />
+            </div>
+            <h3 class="text-xl font-semibold text-white mb-3">{{ feature.title }}</h3>
+            <p class="text-slate-400 mb-6">{{ feature.description }}</p>
             <router-link
               :to="feature.link"
-              class="text-blue-600 font-semibold hover:text-blue-700"
+              class="text-blue-400 font-semibold hover:text-blue-300"
             >
               Pelajari Lebih Lanjut →
             </router-link>
@@ -71,18 +78,18 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-blue-600">
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div>
           <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
             Siap untuk Memulai?
           </h2>
           <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan pengguna yang sudah menggunakan MLHub untuk proyek machine learning mereka
+            Bergabunglah dengan ribuan pengguna yang sudah menggunakan MLHub untuk proyek machine learning mereka.
           </p>
           <router-link
             to="/data-mining"
-            class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+            class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-slate-100 transition-transform hover:scale-105 inline-block"
           >
             Mulai Proyek Pertama Anda
           </router-link>
@@ -93,32 +100,32 @@
 </template>
 
 <script setup lang="ts">
-import { Database, Brain, MessageSquare, TrendingUp, Users, Zap } from 'lucide-vue-next';
+import { Database, BrainCircuit, Bot, TrendingUp, Users, Zap } from 'lucide-vue-next';
 
 const features = [
   {
     icon: Database,
-    title: 'Penambangan & Analisis Data',
-    description: 'Unggah set data, lakukan analisis data, dan terapkan teknik sains data dengan visualisasi interaktif.',
+    title: 'Workspace Data Terpadu',
+    description: 'Unggah, proses, visualisasikan, dan latih model dalam satu alur kerja yang mulus dan terintegrasi.',
     link: '/data-mining',
   },
   {
-    icon: Brain,
-    title: 'Prediksi ML',
-    description: 'Latih dan terapkan model machine learning untuk proyek sains data dan prediksi akurat.',
+    icon: BrainCircuit,
+    title: 'Prediksi ML Tingkat Lanjut',
+    description: 'Manfaatkan model canggih untuk pengenalan gambar dan sistem rekomendasi produk yang kuat.',
     link: '/predictions',
   },
   {
-    icon: MessageSquare,
-    title: 'Chatbot AI',
-    description: 'Chatbot layanan pelanggan cerdas yang didukung oleh pemrosesan bahasa alami.',
+    icon: Bot,
+    title: 'Asisten Chatbot AI',
+    description: 'Dapatkan bantuan instan dan wawasan cerdas dari asisten AI kami yang didukung oleh NLP.',
     link: '/chatbot',
   },
 ];
 
 const stats = [
   { label: 'Pengguna Aktif', value: '10,000+', icon: Users },
-  { label: 'Model ML', value: '500+', icon: Brain },
+  { label: 'Model ML', value: '500+', icon: BrainCircuit },
   { label: 'Prediksi Dibuat', value: '1M+', icon: TrendingUp },
   { label: 'Tingkat Akurasi', value: '94%', icon: Zap },
 ];

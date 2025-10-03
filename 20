@@ -1,8 +1,8 @@
 <template>
   <div class="space-y-8">
-    <div class="bg-white rounded-xl shadow-lg p-8">
-      <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-        <Camera class="h-6 w-6 mr-2 text-blue-600" />
+    <div class="bg-slate-850 border border-slate-800 rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+        <Camera class="h-6 w-6 mr-2 text-blue-500" />
         Pengenalan Gambar
       </h2>
 
@@ -11,33 +11,33 @@
         :class="[
           'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
           isOverDropZone
-            ? 'border-blue-400 bg-blue-50'
-            : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+            ? 'border-blue-500 bg-slate-800'
+            : 'border-slate-700 hover:border-blue-500'
         ]"
         @click="open"
       >
         <input ref="fileInput" type="file" @change="onFileChange" accept="image/*" class="hidden" />
-        <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 class="text-lg font-medium text-gray-900 mb-2">
+        <Upload class="h-12 w-12 text-slate-500 mx-auto mb-4" />
+        <h3 class="text-lg font-medium text-white mb-2">
           {{ isOverDropZone ? 'Jatuhkan gambar di sini' : 'Unggah gambar' }}
         </h3>
-        <p class="text-gray-600 mb-4">
+        <p class="text-slate-400 mb-4">
           Seret dan jatuhkan gambar, atau klik untuk menelusuri
         </p>
-        <div class="text-sm text-gray-500">
-          Format yang didukung: PNG, JPG, JPEG, GIF (Ukuran maks: 10MB)
+        <div class="text-sm text-slate-500">
+          Format yang didukung: PNG, JPG, JPEG, GIF (Maks: 10MB)
         </div>
       </div>
 
       <div class="mt-8">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Atau coba dengan gambar sampel:</h3>
+        <h3 class="text-lg font-medium text-white mb-4">Atau coba dengan gambar sampel:</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <img
             v-for="(image, index) in sampleImages"
             :key="index"
             :src="image"
             :alt="`Sampel ${index + 1}`"
-            class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+            class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity border-2 border-transparent hover:border-blue-500"
             @click="selectSampleImage(image)"
           />
         </div>
@@ -45,12 +45,12 @@
     </div>
 
     <transition name="fade-transform">
-      <div v-if="uploadedImage || isAnalyzing" class="bg-white rounded-xl shadow-lg p-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Hasil Analisis</h3>
+      <div v-if="uploadedImage || isAnalyzing" class="bg-slate-850 border border-slate-800 rounded-xl shadow-lg p-8">
+        <h3 class="text-xl font-semibold text-white mb-6">Hasil Analisis</h3>
         
         <div class="grid md:grid-cols-2 gap-8">
           <div>
-            <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+            <div class="aspect-square bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
               <img
                 v-if="uploadedImage"
                 :src="uploadedImage"
@@ -63,38 +63,38 @@
           <div>
             <div v-if="isAnalyzing" class="flex items-center justify-center h-full">
               <div class="text-center">
-                <Zap class="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-                <p class="text-gray-600">Menganalisis gambar...</p>
+                <Zap class="h-12 w-12 text-blue-500 mx-auto mb-4 animate-pulse" />
+                <p class="text-slate-400">Menganalisis gambar...</p>
               </div>
             </div>
             <div v-else-if="prediction">
               <div class="flex items-center mb-4">
-                <CheckCircle class="h-6 w-6 text-green-600 mr-2" />
-                <h4 class="text-lg font-semibold text-gray-900">Prediksi Selesai</h4>
+                <CheckCircle class="h-6 w-6 text-green-500 mr-2" />
+                <h4 class="text-lg font-semibold text-white">Prediksi Selesai</h4>
               </div>
 
               <div class="mb-6">
-                <div class="text-3xl font-bold text-blue-600 mb-2">
+                <div class="text-3xl font-bold text-blue-400 mb-2">
                   {{ prediction.category }}
                 </div>
-                <div class="text-gray-600">
+                <div class="text-slate-400">
                   Keyakinan: {{(prediction.confidence * 100).toFixed(1)}}%
                 </div>
               </div>
 
               <div>
-                <h5 class="font-medium text-gray-900 mb-3">Prediksi Teratas:</h5>
+                <h5 class="font-medium text-white mb-3">Prediksi Teratas:</h5>
                 <div class="space-y-2">
                   <div v-for="(pred, index) in prediction.predictions" :key="index" class="flex items-center justify-between">
-                    <span class="text-gray-700">{{ pred.label }}</span>
+                    <span class="text-slate-300">{{ pred.label }}</span>
                     <div class="flex items-center space-x-2">
-                      <div class="w-24 bg-gray-200 rounded-full h-2">
+                      <div class="w-24 bg-slate-700 rounded-full h-2">
                         <div
-                          class="bg-blue-600 h-2 rounded-full"
+                          class="bg-blue-500 h-2 rounded-full"
                           :style="{ width: `${pred.confidence * 100}%` }"
                         ></div>
                       </div>
-                      <span class="text-sm text-gray-600 w-12">
+                      <span class="text-sm text-slate-400 w-12 text-right">
                         {{(pred.confidence * 100).toFixed(1)}}%
                       </span>
                     </div>
@@ -138,11 +138,6 @@ const { isOverDropZone } = useDropZone(dropZoneRef, {
   onDrop: handleFiles,
   dataTypes: ['image/*']
 });
-
-function onFileChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  handleFiles(target.files ? Array.from(target.files) : null);
-}
 
 function open() {
   fileInput.value?.click();
