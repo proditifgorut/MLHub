@@ -1,141 +1,210 @@
 <template>
-  <div class="min-h-screen py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Ruang Kerja Analisis Data</h1>
-        <p class="text-gray-600">Lingkungan lengkap Anda untuk analisis data, visualisasi, dan penemuan wawasan.</p>
+  <transition name="fade-transform" appear>
+    <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
+      <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">No Data Uploaded</h3>
+      <p class="text-gray-600">Please upload a dataset first to visualize your data.</p>
+    </div>
+    
+    <div v-else class="space-y-6">
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-semibold text-gray-900">Data Visualization</h2>
+          <span v-if="isProcessed" class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            Data Processed
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button
+            v-for="chart in charts"
+            :key="chart.id"
+            @click="activeChart = chart.id"
+            :class="[
+              'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors',
+              activeChart === chart.id
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ]"
+          >
+            <component :is="chart.icon" class="h-4 w-4" />
+            <span>{{ chart.label }}</span>
+          </button>
+        </div>
       </div>
 
-      <div class="flex flex-wrap gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          @click="activeTab = tab.id"
-          :class="[
-            'flex items-center space-x-2 px-4 py-2 rounded-md font-medium transition-colors text-sm sm:text-base',
-            activeTab === tab.id
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          ]"
-        >
-          <component :is="tab.icon" class="h-4 w-4" />
-          <span>{{ tab.label }}</span>
-        </button>
+      <div class="bg-white rounded-xl shadow-lg p-6">
+        <div class="h-96">
+          <v-chart class="w-full h-full" :option="chartOption" autoresize />
+        </div>
       </div>
 
-      <div class="space-y-8">
-        <transition name="fade-transform" mode="out-in">
-          <div v-if="activeTab === 'upload'" class="bg-white rounded-xl shadow-lg p-8">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Unggah Dataset</h2>
-            
-            <div
-              ref="dropZoneRef"
-              :class="[
-                'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
-                isOverDropZone
-                  ? 'border-blue-400 bg-blue-50'
-                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
-              ]"
-              @click="open"
-            >
-              <input ref="fileInput" type="file" @change="onFileChange" accept=".csv,.xls,.xlsx" class="hidden" />
-              <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 class="text-lg font-medium text-gray-900 mb-2">
-                {{ isOverDropZone ? 'Letakkan file di sini' : 'Unggah dataset Anda' }}
-              </h3>
-              <p class="text-gray-600 mb-4">
-                Seret dan letakkan file CSV atau Excel Anda, atau klik untuk menelusuri
-              </p>
-              <div class="text-sm text-gray-500">
-                Format yang didukung: CSV, XLS, XLSX (Ukuran maks: 10MB)
-              </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Dataset Info</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Rows:</span>
+              <span class="font-medium">1,250</span>
             </div>
-
-            <div v-if="uploadedFile" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div class="flex items-center justify-between">
-                <div>
-                  <h4 class="font-medium text-green-900">File berhasil diunggah!</h4>
-                  <p class="text-green-700">{{ uploadedFile.name }}</p>
-                </div>
-                <button
-                  @click="activeTab = 'process'"
-                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Proses Data
-                </button>
-              </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Columns:</span>
+              <span class="font-medium">8</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Size:</span>
+              <span class="font-medium">2.4 MB</span>
             </div>
           </div>
+        </div>
 
-          <DataProcessing v-else-if="activeTab === 'process'" :has-data="!!uploadedFile" @process-complete="isDataProcessed = true" />
-          <DataVisualization v-else-if="activeTab === 'visualize'" :has-data="!!uploadedFile" :is-processed="isDataProcessed" />
-          <ModelTraining v-else-if="activeTab === 'train'" :has-data="!!uploadedFile" :is-processed="isDataProcessed" />
-        </transition>
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Data Quality</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Missing Values:</span>
+              <span :class="['font-medium', isProcessed ? 'text-green-600' : 'text-yellow-600']">
+                {{ isProcessed ? '0%' : '2.3%' }}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Duplicates:</span>
+              <span class="font-medium text-green-600">0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Outliers:</span>
+              <span class="font-medium text-red-600">1.8%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">Correlations</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Price vs Sales:</span>
+              <span class="font-medium">0.76</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Rating vs Reviews:</span>
+              <span class="font-medium">0.82</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Age vs Income:</span>
+              <span class="font-medium">0.45</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useDropZone } from '@vueuse/core';
-import { Upload, BarChart3, SlidersHorizontal, Play } from 'lucide-vue-next';
-import DataVisualization from '../components/DataVisualization.vue';
-import ModelTraining from '../components/ModelTraining.vue';
-import DataProcessing from '../components/DataProcessing.vue';
+import { ref, computed } from 'vue';
+import { BarChart3, PieChart, LineChart, TrendingUp, FileWarning } from 'lucide-vue-next';
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { BarChart as EBarChart, LineChart as ELineChart, PieChart as EPieChart, ScatterChart as EScatterChart } from 'echarts/charts';
+import { GridComponent, TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components';
+import VChart from 'vue-echarts';
+import { faker } from '@faker-js/faker';
 
-const uploadedFile = ref<File | null>(null);
-const isDataProcessed = ref(false);
-const activeTab = ref('upload');
+use([CanvasRenderer, EBarChart, ELineChart, EPieChart, EScatterChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent]);
 
-const dropZoneRef = ref<HTMLDivElement>();
-const fileInput = ref<HTMLInputElement>();
+defineProps<{
+  hasData: boolean;
+  isProcessed: boolean;
+}>();
 
-function handleFiles(files: File[] | null) {
-  if (files && files.length > 0) {
-    if (files[0].size > 10 * 1024 * 1024) {
-      alert("Ukuran file tidak boleh melebihi 10MB.");
-      return;
-    }
-    uploadedFile.value = files[0];
-    activeTab.value = 'process';
-    isDataProcessed.value = false;
-  }
-}
+const activeChart = ref('bar');
 
-const { isOverDropZone } = useDropZone(dropZoneRef, {
-  onDrop: handleFiles,
-  dataTypes: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-});
-
-function onFileChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  handleFiles(target.files ? Array.from(target.files) : null);
-}
-
-function open() {
-  fileInput.value?.click();
-}
-
-const tabs = [
-  { id: 'upload', label: '1. Unggah', icon: Upload },
-  { id: 'process', label: '2. Proses Data', icon: SlidersHorizontal },
-  { id: 'visualize', label: '3. Visualisasi', icon: BarChart3 },
-  { id: 'train', label: '4. Latih Model', icon: Play },
+const charts = [
+  { id: 'bar', label: 'Bar Chart', icon: BarChart3 },
+  { id: 'line', label: 'Line Chart', icon: LineChart },
+  { id: 'pie', label: 'Pie Chart', icon: PieChart },
+  { id: 'scatter', label: 'Scatter Plot', icon: TrendingUp },
 ];
+
+const chartOption = computed(() => {
+  switch (activeChart.value) {
+    case 'bar':
+      const barData = Array.from({ length: 8 }, () => ({
+        name: faker.commerce.productName().substring(0, 15),
+        value: faker.number.int({ min: 10, max: 100 }),
+        sales: faker.number.int({ min: 1000, max: 5000 }),
+      }));
+      return {
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['Value', 'Sales'] },
+        xAxis: { type: 'category', data: barData.map(d => d.name), axisLabel: { rotate: -45, interval: 0 } },
+        yAxis: { type: 'value' },
+        series: [
+          { name: 'Value', type: 'bar', data: barData.map(d => d.value), itemStyle: { color: '#3B82F6' } },
+          { name: 'Sales', type: 'bar', data: barData.map(d => d.sales), itemStyle: { color: '#82ca9d' } },
+        ],
+      };
+    case 'line':
+      const lineData = Array.from({ length: 12 }, (_, i) => ({
+        month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i],
+        revenue: faker.number.int({ min: 30000, max: 80000 }),
+        users: faker.number.int({ min: 1000, max: 5000 }),
+      }));
+      return {
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['Revenue', 'Active Users'] },
+        xAxis: { type: 'category', boundaryGap: false, data: lineData.map(d => d.month) },
+        yAxis: { type: 'value' },
+        series: [
+          { name: 'Revenue', type: 'line', smooth: true, data: lineData.map(d => d.revenue), itemStyle: { color: '#3B82F6' } },
+          { name: 'Active Users', type: 'line', smooth: true, data: lineData.map(d => d.users), itemStyle: { color: '#10B981' } },
+        ],
+      };
+    case 'pie':
+      const pieData = [
+        { name: 'Technology', value: 400, itemStyle: { color: '#3B82F6' } },
+        { name: 'Health', value: 300, itemStyle: { color: '#10B981' } },
+        { name: 'Finance', value: 300, itemStyle: { color: '#F59E0B' } },
+        { name: 'Education', value: 200, itemStyle: { color: '#EF4444' } },
+      ];
+      return {
+        tooltip: { trigger: 'item' },
+        legend: { orient: 'vertical', left: 'left' },
+        series: [{
+          name: 'Sector',
+          type: 'pie',
+          radius: '70%',
+          data: pieData,
+          emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } },
+        }],
+      };
+    case 'scatter':
+      const scatterData = Array.from({ length: 20 }, () => [faker.number.int({ min: 20, max: 100 }), faker.number.int({ min: 20, max: 100 })]);
+      return {
+        tooltip: { trigger: 'item' },
+        xAxis: { name: 'Feature X' },
+        yAxis: { name: 'Feature Y' },
+        series: [{
+          name: 'Dataset Points',
+          symbolSize: 10,
+          data: scatterData,
+          type: 'scatter',
+          itemStyle: { color: '#3B82F6' }
+        }],
+      };
+    default:
+      return {};
+  }
+});
 </script>
 
 <style scoped>
 .fade-transform-enter-active,
 .fade-transform-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.fade-transform-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
+.fade-transform-enter-from,
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(20px);
 }
 </style>

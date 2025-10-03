@@ -1,125 +1,155 @@
 <template>
-  <div class="min-h-screen">
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white py-20">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h1 class="text-4xl md:text-6xl font-bold mb-6">
-            Platform untuk Analis Data
-            <span class="block text-yellow-300">& Ilmuwan Data</span>
-          </h1>
-          <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Memberdayakan para profesional data dan penggemar ML untuk mengunggah data, melatih model, dan mendapatkan wawasan secara instan.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <router-link
-              to="/analisis-data"
-              class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Mulai Analisis
-            </router-link>
-            <router-link
-              to="/prediksi"
-              class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
-            >
-              Buat Prediksi
-            </router-link>
+  <transition name="fade-transform" appear>
+    <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
+      <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">No Data Uploaded</h3>
+      <p class="text-gray-600">Please go to the 'Upload' tab to upload a dataset first.</p>
+    </div>
+    
+    <div v-else class="bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Data Preprocessing</h2>
+      <p class="text-gray-600 mb-6">Clean and prepare your data for analysis and model training. This is a crucial step for any data analyst or data scientist.</p>
+      
+      <transition name="fade-transform" mode="out-in">
+        <div v-if="processingDone" class="text-center py-8">
+          <CheckCircle class="h-16 w-16 text-green-500 mx-auto mb-4" />
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Processing Complete!</h3>
+          <p class="text-gray-600 mb-6">Your data has been cleaned and is ready for the next step.</p>
+          
+          <div class="bg-gray-50 rounded-lg p-4 max-w-md mx-auto text-left space-y-2">
+            <h4 class="font-semibold text-gray-800">Processing Summary:</h4>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-red-600">{{ summary.rowsRemoved }} rows</span> with missing values were removed.
+            </p>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-blue-600">{{ summary.columnsScaled }} numerical columns</span> were scaled using {{ processingOptions.featureScaling }}.
+            </p>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-green-600">{{ summary.columnsEncoded }} categorical columns</span> were encoded using {{ processingOptions.encoding }}.
+            </p>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Stats Section -->
-    <section class="py-16 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div v-for="stat in stats" :key="stat.label" class="text-center">
-            <component :is="stat.icon" class="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <div class="text-3xl font-bold text-gray-900 mb-1">{{ stat.value }}</div>
-            <div class="text-gray-600">{{ stat.label }}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-20 bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Fitur ML yang Kuat
-          </h2>
-          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-            Semua yang Anda butuhkan untuk membangun, melatih, dan menerapkan model machine learning
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-          <div v-for="feature in features" :key="feature.title" class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-            <component :is="feature.icon" class="h-12 w-12 text-blue-600 mb-4" />
-            <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ feature.title }}</h3>
-            <p class="text-gray-600 mb-6">{{ feature.description }}</p>
-            <router-link
-              :to="feature.link"
-              class="text-blue-600 font-semibold hover:text-blue-700"
-            >
-              Pelajari Lebih Lanjut →
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-20 bg-blue-600">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-            Siap untuk Memulai?
-          </h2>
-          <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan pengguna yang sudah menggunakan MLHub untuk proyek machine learning mereka
-          </p>
-          <router-link
-            to="/penambangan-data"
-            class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+          <button
+            @click="processingDone = false"
+            class="mt-6 text-blue-600 font-semibold hover:text-blue-700"
           >
-            Mulai Proyek Pertama Anda
-          </router-link>
+            Reprocess Data
+          </button>
         </div>
-      </div>
-    </section>
-  </div>
+
+        <div v-else class="space-y-8">
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Trash2 class="h-6 w-6 text-red-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Missing Values</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Choose how to handle rows with missing data. Essential for data quality.</p>
+              <select
+                v-model="processingOptions.missingValues"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="remove">Remove Rows</option>
+                <option value="fill-mean">Fill with Mean</option>
+                <option value="fill-median">Fill with Median</option>
+              </select>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Scale class="h-6 w-6 text-blue-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Feature Scaling</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Normalize numerical features to improve model performance.</p>
+              <select
+                v-model="processingOptions.featureScaling"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="standardization">Standardization (Z-score)</option>
+                <option value="normalization">Normalization (Min-Max)</option>
+              </select>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Binary class="h-6 w-6 text-green-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Categorical Encoding</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Convert text categories into machine-readable numerical formats.</p>
+              <select
+                v-model="processingOptions.encoding"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="one-hot">One-Hot Encoding</option>
+                <option value="label">Label Encoding</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-end">
+            <button
+              @click="handleProcess"
+              :disabled="isProcessing"
+              class="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <template v-if="isProcessing">
+                <Loader class="h-5 w-5 animate-spin" />
+                <span>Processing Data...</span>
+              </template>
+              <template v-else>
+                <SlidersHorizontal class="h-5 w-5" />
+                <span>Apply Processing</span>
+              </template>
+            </button>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
 </template>
 
 <script setup lang="ts">
-import { Database, Brain, MessageSquare, TrendingUp, Users, Zap } from 'lucide-vue-next';
+import { ref, reactive } from 'vue';
+import { SlidersHorizontal, CheckCircle, Loader, Trash2, Scale, Binary, FileWarning } from 'lucide-vue-next';
 
-const features = [
-  {
-    icon: Database,
-    title: 'Penambangan & Analisis Data',
-    description: 'Unggah dataset, lakukan analisis data, dan terapkan teknik sains data dengan visualisasi interaktif.',
-    link: '/penambangan-data',
-  },
-  {
-    icon: Brain,
-    title: 'Prediksi ML',
-    description: 'Latih dan terapkan model machine learning untuk proyek sains data dan prediksi yang akurat.',
-    link: '/prediksi',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Chatbot AI',
-    description: 'Chatbot layanan pelanggan cerdas yang didukung oleh pemrosesan bahasa alami.',
-    link: '/chatbot',
-  },
-];
+const props = defineProps<{
+  hasData: boolean;
+}>();
 
-const stats = [
-  { label: 'Pengguna Aktif', value: '10.000+', icon: Users },
-  { label: 'Model ML', value: '500+', icon: Brain },
-  { label: 'Prediksi Dibuat', value: '1M+', icon: TrendingUp },
-  { label: 'Tingkat Akurasi', value: '94%', icon: Zap },
-];
+const emit = defineEmits(['processComplete']);
+
+const isProcessing = ref(false);
+const processingDone = ref(false);
+const summary = reactive({ rowsRemoved: 0, columnsScaled: 0, columnsEncoded: 0 });
+
+const processingOptions = reactive({
+  missingValues: 'remove',
+  featureScaling: 'standardization',
+  encoding: 'one-hot',
+});
+
+const handleProcess = () => {
+  isProcessing.value = true;
+  processingDone.value = false;
+  setTimeout(() => {
+    summary.rowsRemoved = Math.floor(Math.random() * 50);
+    summary.columnsScaled = 3;
+    summary.columnsEncoded = 2;
+    isProcessing.value = false;
+    processingDone.value = true;
+    emit('processComplete');
+  }, 2500);
+};
 </script>
+
+<style scoped>
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-transform-enter-from,
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>

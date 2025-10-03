@@ -1,191 +1,166 @@
 <template>
-  <div class="space-y-8">
-    <div class="bg-white rounded-xl shadow-lg p-8">
-      <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
-        <Camera class="h-6 w-6 mr-2 text-blue-600" />
-        Pengenalan Gambar
-      </h2>
-
-      <div
-        ref="dropZoneRef"
-        :class="[
-          'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
-          isOverDropZone
-            ? 'border-blue-400 bg-blue-50'
-            : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
-        ]"
-        @click="open"
-      >
-        <input ref="fileInput" type="file" @change="onFileChange" accept="image/*" class="hidden" />
-        <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <h3 class="text-lg font-medium text-gray-900 mb-2">
-          {{ isOverDropZone ? 'Letakkan gambar di sini' : 'Unggah sebuah gambar' }}
-        </h3>
-        <p class="text-gray-600 mb-4">
-          Seret dan letakkan gambar, atau klik untuk menelusuri
+  <div class="min-h-screen py-8 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Machine Learning Projects</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Explore common ML projects with explanations, algorithms, and example results.
         </p>
-        <div class="text-sm text-gray-500">
-          Format yang didukung: PNG, JPG, JPEG, GIF (Ukuran maks: 10MB)
-        </div>
       </div>
 
-      <div class="mt-8">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Atau coba dengan gambar contoh:</h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <img
-            v-for="(image, index) in sampleImages"
-            :key="index"
-            :src="image"
-            :alt="`Contoh ${index + 1}`"
-            class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-            @click="selectSampleImage(image)"
-          />
+      <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8">
+        <div v-for="(project, index) in projects" :key="index">
+          <ProjectCard :project="project" />
         </div>
       </div>
     </div>
-
-    <transition name="fade-transform">
-      <div v-if="uploadedImage || isAnalyzing" class="bg-white rounded-xl shadow-lg p-8">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">Hasil Analisis</h3>
-        
-        <div class="grid md:grid-cols-2 gap-8">
-          <div>
-            <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-              <img
-                v-if="uploadedImage"
-                :src="uploadedImage"
-                alt="Diunggah"
-                class="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div v-if="isAnalyzing" class="flex items-center justify-center h-full">
-              <div class="text-center">
-                <Zap class="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-                <p class="text-gray-600">Menganalisis gambar...</p>
-              </div>
-            </div>
-            <div v-else-if="prediction">
-              <div class="flex items-center mb-4">
-                <CheckCircle class="h-6 w-6 text-green-600 mr-2" />
-                <h4 class="text-lg font-semibold text-gray-900">Prediksi Selesai</h4>
-              </div>
-
-              <div class="mb-6">
-                <div class="text-3xl font-bold text-blue-600 mb-2">
-                  {{ prediction.category }}
-                </div>
-                <div class="text-gray-600">
-                  Keyakinan: {{(prediction.confidence * 100).toFixed(1)}}%
-                </div>
-              </div>
-
-              <div>
-                <h5 class="font-medium text-gray-900 mb-3">Prediksi Teratas:</h5>
-                <div class="space-y-2">
-                  <div v-for="(pred, index) in prediction.predictions" :key="index" class="flex items-center justify-between">
-                    <span class="text-gray-700">{{ pred.label }}</span>
-                    <div class="flex items-center space-x-2">
-                      <div class="w-24 bg-gray-200 rounded-full h-2">
-                        <div
-                          class="bg-blue-600 h-2 rounded-full"
-                          :style="{ width: `${pred.confidence * 100}%` }"
-                        ></div>
-                      </div>
-                      <span class="text-sm text-gray-600 w-12">
-                        {{(pred.confidence * 100).toFixed(1)}}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useDropZone } from '@vueuse/core';
-import { Camera, Upload, Zap, CheckCircle } from 'lucide-vue-next';
+import { defineComponent, shallowRef } from 'vue';
+import { FlaskConical, ClipboardList, Code2 } from 'lucide-vue-next';
+import { faker } from '@faker-js/faker';
 
-const uploadedImage = ref<string | null>(null);
-const prediction = ref<any>(null);
-const isAnalyzing = ref(false);
+import { use } from 'echarts/core';
+import { CanvasRenderer } from 'echarts/renderers';
+import { BarChart, LineChart, PieChart, ScatterChart } from 'echarts/charts';
+import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+import VChart from 'vue-echarts';
 
-const dropZoneRef = ref<HTMLDivElement>();
-const fileInput = ref<HTMLInputElement>();
+use([CanvasRenderer, BarChart, LineChart, PieChart, ScatterChart, GridComponent, TooltipComponent, LegendComponent]);
 
-function handleFiles(files: File[] | null) {
-  if (files && files.length > 0) {
-    const file = files[0];
-    if (file.size > 10 * 1024 * 1024) {
-      alert("Ukuran file tidak boleh melebihi 10MB.");
-      return;
-    }
-    const imageUrl = URL.createObjectURL(file);
-    uploadedImage.value = imageUrl;
-    analyzeImage();
-  }
-}
-
-const { isOverDropZone } = useDropZone(dropZoneRef, {
-  onDrop: handleFiles,
-  dataTypes: ['image/*']
+const ProjectCard = defineComponent({
+  name: 'ProjectCard',
+  components: { VChart, FlaskConical, ClipboardList, Code2 },
+  props: {
+    project: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const fieldConfig: Record<string, { icon: any; color: string }> = {
+      'Data Science': { icon: shallowRef(FlaskConical), color: 'bg-indigo-100 text-indigo-800' },
+      'Data Analysis': { icon: shallowRef(ClipboardList), color: 'bg-green-100 text-green-800' },
+      'ML Engineering': { icon: shallowRef(Code2), color: 'bg-pink-100 text-pink-800' },
+    };
+    const config = fieldConfig[props.project.field as keyof typeof fieldConfig] || fieldConfig['Data Science'];
+    return { config };
+  },
+  template: `
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
+      <div class="p-6 flex-grow">
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="text-xl font-bold text-gray-900 pr-4">{{ project.title }}</h3>
+          <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
+            <component :is="config.icon" class="h-3 w-3 mr-1" />
+            {{ project.field }}
+          </span>
+        </div>
+        <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
+        
+        <div class="space-y-3 text-sm mb-4">
+          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Algorithm:</strong><span class="text-gray-800">{{ project.algorithm }}</span></div>
+          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Formula/Concept:</strong><code class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ project.formula }}</code></div>
+          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Dataset:</strong><span class="text-gray-800">{{ project.dataset }}</span></div>
+        </div>
+      </div>
+      <div class="p-6 pt-0">
+        <h4 class="text-md font-semibold text-gray-800 mb-2">Example Result / Calculation</h4>
+        <div class="bg-gray-50 p-2 rounded-lg">
+          <div v-if="project.chartType" class="h-[200px]">
+            <v-chart :option="project.chartOption" autoresize />
+          </div>
+          <div v-else v-html="project.customChart"></div>
+        </div>
+      </div>
+    </div>
+  `,
 });
 
-function onFileChange(event: Event) {
-  const target = event.target as HTMLInputElement;
-  handleFiles(target.files ? Array.from(target.files) : null);
-}
-
-function open() {
-  fileInput.value?.click();
-}
-
-const analyzeImage = () => {
-  isAnalyzing.value = true;
-  prediction.value = null;
-  setTimeout(() => {
-    prediction.value = {
-      category: 'Kucing',
-      confidence: 0.94,
-      predictions: [
-        { label: 'Kucing', confidence: 0.94 },
-        { label: 'Anjing', confidence: 0.04 },
-        { label: 'Harimau', confidence: 0.02 },
+const projects = [
+  {
+    category: 'Data Mining', field: 'Data Science', title: 'Stock Price Prediction',
+    description: 'Using time-series analysis to forecast future stock or cryptocurrency prices based on historical data.',
+    algorithm: 'Regression / LSTM', formula: 'y = mx + b (Linear Regression)', dataset: 'Yahoo Finance, Binance API',
+    chartType: 'line',
+    chartOption: {
+      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: Array.from({ length: 12 }, (_, i) => `Day ${i + 1}`) }, yAxis: { type: 'value' },
+      series: [
+        { name: 'Actual', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
+        { name: 'Predicted', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
       ],
-    };
-    isAnalyzing.value = false;
-  }, 2000);
-};
-
-const sampleImages = [
-  'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=300&h=200&fit=crop',
+    },
+  },
+  {
+    category: 'Data Mining', field: 'Data Science', title: 'Customer Segmentation',
+    description: 'Grouping customers into distinct segments based on purchasing behavior or demographics for targeted marketing.',
+    algorithm: 'K-Means Clustering', formula: 'minimize Σ ||x - μi||²', dataset: 'E-commerce transaction data',
+    chartType: 'scatter',
+    chartOption: {
+      tooltip: { trigger: 'item' }, legend: {}, xAxis: { name: 'Spending Score' }, yAxis: { name: 'Income' },
+      series: [
+        { name: 'Cluster 1', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#8884d8' } },
+        { name: 'Cluster 2', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#82ca9d' } },
+        { name: 'Cluster 3', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#ffc658' } },
+      ],
+    },
+  },
+  {
+    category: 'Data Mining', field: 'Data Analysis', title: 'Sentiment Analysis',
+    description: 'Analyzing product reviews to determine if the sentiment is positive, negative, or neutral using Natural Language Processing (NLP).',
+    algorithm: 'NLP / Naive Bayes', formula: 'P(A|B) = [P(B|A) * P(A)] / P(B)', dataset: 'Amazon/Yelp Reviews',
+    chartType: 'bar',
+    chartOption: {
+      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: ['Positive', 'Neutral', 'Negative'] }, yAxis: { type: 'value' },
+      series: [{ name: 'Review Count', type: 'bar', data: [faker.number.int({ min: 500, max: 1000 }), faker.number.int({ min: 200, max: 500 }), faker.number.int({ min: 100, max: 300 })] }],
+    },
+  },
+  {
+    category: 'Data Mining', field: 'Data Science', title: 'Fraud Detection',
+    description: 'Identifying suspicious patterns in financial transactions to detect and prevent fraudulent activities.',
+    algorithm: 'Decision Tree / Random Forest', formula: 'Gini Impurity / Information Gain', dataset: 'Credit Card Transactions',
+    chartType: 'pie',
+    chartOption: {
+      tooltip: { trigger: 'item' }, legend: {},
+      series: [{
+        name: 'Transactions', type: 'pie', radius: '70%',
+        data: [
+          { value: faker.number.int({ min: 950, max: 1000 }), name: 'Not Fraud', itemStyle: { color: '#82ca9d' } },
+          { value: faker.number.int({ min: 10, max: 50 }), name: 'Fraud', itemStyle: { color: '#EF4444' } },
+        ],
+      }],
+    },
+  },
+  {
+    category: 'Data Mining', field: 'Data Science', title: 'Customer Churn Prediction',
+    description: 'Predicting which customers are likely to stop using a service, allowing for proactive retention efforts.',
+    algorithm: 'Classification (Logistic Regression)', formula: 'P(y=1) = 1 / (1 + e^-z)', dataset: 'Subscription Service Data',
+    chartType: 'bar',
+    chartOption: {
+      grid: { containLabel: true }, tooltip: { trigger: 'axis' },
+      xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['Will Churn', 'Will Not Churn'] },
+      series: [{ name: 'Customer Count', type: 'bar', data: [150, 850], itemStyle: { color: '#ffc658' } }],
+    },
+  },
+  {
+    category: 'Web/Mobile', field: 'ML Engineering', title: 'Product Recommendation System',
+    description: 'Suggesting products to users based on their past behavior or the behavior of similar users.',
+    algorithm: 'Collaborative Filtering', formula: 'Similarity(A, B) = cos(θ)', dataset: 'User ratings, purchase history',
+    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><h4 class="font-semibold mb-2">Example Recommendation</h4><div class="flex justify-around items-center"><div class="text-center"><p>User A likes:</p><p class="font-bold">📱, 💻</p></div><p class="text-2xl">+</p><div class="text-center"><p>User B likes:</p><p class="font-bold">📱, 💻, ⌚</p></div><p class="text-2xl">→</p><div class="text-center"><p>Recommend to A:</p><p class="font-bold text-blue-600 text-2xl">⌚</p></div></div></div>`
+  },
+  {
+    category: 'Web/Mobile', field: 'ML Engineering', title: 'Intelligent Chatbot with NLP',
+    description: 'Automated customer service using advanced language models like BERT or GPT to understand and respond to user queries.',
+    algorithm: 'Transformers (BERT/GPT)', formula: 'Attention(Q, K, V)', dataset: 'Conversation logs, FAQs',
+    customChart: `<div class="text-sm p-4 bg-gray-50 rounded-lg h-[200px] flex flex-col justify-center"><p><span class="font-bold text-blue-600">User:</span> How do I reset my password?</p><p class="mt-2"><span class="font-bold text-green-600">Bot:</span> You can reset your password by going to "Settings" > "Security" and clicking "Reset Password".</p></div>`
+  },
+  {
+    category: 'Web/Mobile', field: 'ML Engineering', title: 'Image Recognition',
+    description: 'Automatically identify and label objects in user-uploaded images, such as plant species or food items.',
+    algorithm: 'Convolutional Neural Network (CNN)', formula: 'Convolution + Pooling Layers', dataset: 'ImageNet, Custom Image Sets',
+    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=120&fit=crop" alt="cat" class="mx-auto rounded-lg mb-2" /><p>Prediction: <span class="font-bold text-blue-600">Cat (94% confidence)</span></p></div>`
+  },
 ];
-
-const selectSampleImage = (image: string) => {
-  uploadedImage.value = image;
-  analyzeImage();
-};
 </script>
-
-<style scoped>
-.fade-transform-enter-active,
-.fade-transform-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.fade-transform-enter-from,
-.fade-transform-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-</style>

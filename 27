@@ -1,189 +1,164 @@
 <template>
   <div class="min-h-screen py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Asisten AI</h1>
-        <p class="text-gray-600">Dapatkan bantuan cerdas untuk proyek machine learning Anda</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ workspaceConfig.title }}</h1>
+        <p class="text-gray-600">{{ workspaceConfig.description }}</p>
       </div>
 
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" style="height: 75vh;">
-        <div class="bg-blue-600 text-white p-4">
-          <div class="flex items-center space-x-2">
-            <Bot class="h-6 w-6" />
-            <div>
-              <h3 class="font-semibold">Asisten ML</h3>
-              <p class="text-sm text-blue-100">Online • Siap membantu</p>
-            </div>
-          </div>
-        </div>
+      <div class="flex flex-wrap gap-2 mb-8 bg-gray-100 p-1 rounded-lg">
+        <button
+          v-for="tab in tabs"
+          :key="tab.id"
+          @click="activeTab = tab.id"
+          :class="[
+            'flex items-center space-x-2 px-4 py-2 rounded-md font-medium transition-colors text-sm sm:text-base',
+            activeTab === tab.id
+              ? 'bg-white text-blue-600 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          ]"
+        >
+          <component :is="tab.icon" class="h-4 w-4" />
+          <span>{{ tab.label }}</span>
+        </button>
+      </div>
 
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" ref="messagesContainer">
-          <transition-group name="message">
+      <div class="space-y-8">
+        <transition name="fade-transform" mode="out-in">
+          <div v-if="activeTab === 'upload'" class="bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Upload Dataset</h2>
+            
             <div
-              v-for="message in messages"
-              :key="message.id"
-              :class="['flex', message.isBot ? 'justify-start' : 'justify-end']"
+              ref="dropZoneRef"
+              :class="[
+                'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
+                isOverDropZone
+                  ? 'border-blue-400 bg-blue-50'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+              ]"
+              @click="open"
             >
-              <div :class="['flex items-start space-x-2 max-w-xs lg:max-w-md', message.isBot ? 'flex-row' : 'flex-row-reverse space-x-reverse']">
-                <div :class="['w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0', message.isBot ? 'bg-blue-100' : 'bg-gray-100']">
-                  <Bot v-if="message.isBot" class="h-4 w-4 text-blue-600" />
-                  <User v-else class="h-4 w-4 text-gray-600" />
-                </div>
-                <div :class="['rounded-lg p-3', message.isBot ? 'bg-gray-100 text-gray-900' : 'bg-blue-600 text-white']">
-                  <p class="text-sm">{{ message.text }}</p>
-                  <p :class="['text-xs mt-1', message.isBot ? 'text-gray-500' : 'text-blue-100']">
-                    {{ message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
-                  </p>
-                </div>
+              <input ref="fileInput" type="file" @change="onFileChange" accept=".csv,.xls,.xlsx" class="hidden" />
+              <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 class="text-lg font-medium text-gray-900 mb-2">
+                {{ isOverDropZone ? 'Drop file here' : 'Upload your dataset' }}
+              </h3>
+              <p class="text-gray-600 mb-4">
+                Drag and drop your CSV or Excel file, or click to browse
+              </p>
+              <div class="text-sm text-gray-500">
+                Supported formats: CSV, XLS, XLSX (Max size: 10MB)
               </div>
             </div>
-          </transition-group>
 
-          <div v-if="isTyping" class="flex justify-start">
-            <div class="flex items-start space-x-2">
-              <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <Bot class="h-4 w-4 text-blue-600" />
-              </div>
-              <div class="bg-gray-100 rounded-lg p-3">
-                <div class="flex space-x-1">
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+            <div v-if="uploadedFile" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h4 class="font-medium text-green-900">File uploaded successfully!</h4>
+                  <p class="text-green-700">{{ uploadedFile.name }}</p>
                 </div>
+                <button
+                  @click="activeTab = 'process'"
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Process Data
+                </button>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="border-t border-gray-200 p-4">
-          <p class="text-sm text-gray-600 mb-2">Tindakan cepat:</p>
-          <div class="flex flex-wrap gap-2">
-            <button
-              v-for="action in quickActions"
-              :key="action"
-              @click="inputText = action"
-              class="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
-            >
-              {{ action }}
-            </button>
-          </div>
-        </div>
-
-        <div class="border-t border-gray-200 p-4">
-          <div class="flex items-center space-x-2">
-            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Paperclip class="h-5 w-5" />
-            </button>
-            <div class="flex-1 relative">
-              <textarea
-                v-model="inputText"
-                @keypress.enter.prevent="handleSendMessage"
-                placeholder="Tanyakan apa saja tentang machine learning..."
-                class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows="1"
-              ></textarea>
-            </div>
-            <button class="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <Mic class="h-5 w-5" />
-            </button>
-            <button
-              @click="handleSendMessage"
-              :disabled="!inputText.trim()"
-              class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Send class="h-5 w-5" />
-            </button>
-          </div>
-        </div>
+          <DataProcessing v-else-if="activeTab === 'process'" :has-data="!!uploadedFile" @process-complete="isDataProcessed = true" />
+          <DataVisualization v-else-if="activeTab === 'visualize'" :has-data="!!uploadedFile" :is-processed="isDataProcessed" />
+          <ModelTraining v-else-if="activeTab === 'train'" :has-data="!!uploadedFile" :is-processed="isDataProcessed" />
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onUpdated } from 'vue';
-import { Send, Bot, User, Mic, Paperclip } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useDropZone } from '@vueuse/core';
+import { Upload, BarChart3, SlidersHorizontal, Play } from 'lucide-vue-next';
+import DataVisualization from '../components/DataVisualization.vue';
+import ModelTraining from '../components/ModelTraining.vue';
+import DataProcessing from '../components/DataProcessing.vue';
 
-interface Message {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
+const route = useRoute();
 
-const messages = ref<Message[]>([
-  {
-    id: '1',
-    text: 'Halo! Saya asisten AI Anda. Saya dapat membantu Anda dengan pertanyaan machine learning, analisis data, dan memberikan wawasan tentang proyek Anda. Ada yang bisa saya bantu hari ini?',
-    isBot: true,
-    timestamp: new Date(),
-  },
-]);
-const inputText = ref('');
-const isTyping = ref(false);
-const messagesContainer = ref<HTMLDivElement | null>(null);
-
-const scrollToBottom = () => {
-  if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+const workspaceConfig = computed(() => {
+  const path = route.path;
+  if (path === '/data-mining') {
+    return {
+      title: 'Data Mining Workspace',
+      description: 'Your complete environment for data mining, analysis, and machine learning model training.'
+    };
   }
-};
-
-onUpdated(() => {
-  scrollToBottom();
+  if (path === '/data-science') {
+    return {
+      title: 'Data Science Workspace',
+      description: 'Your complete environment for data science exploration, modeling, and in-depth analysis.'
+    };
+  }
+  return {
+    title: 'Data Analysis Workspace',
+    description: 'Your complete environment for data analysis, visualization, and insight discovery.'
+  };
 });
 
-const botResponses = [
-  "Itu pertanyaan bagus tentang machine learning! Berdasarkan data Anda, saya sarankan memulai dengan model regresi linier untuk membuat baseline.",
-  "Untuk dataset Anda, Anda mungkin ingin mempertimbangkan langkah-langkah pra-pemrosesan data seperti menangani nilai yang hilang dan penskalaan fitur sebelum melatih model Anda.",
-  "Metrik akurasi yang Anda lihat menunjukkan model Anda berkinerja baik. Anda mungkin juga ingin melihat presisi dan recall untuk gambaran yang lebih lengkap.",
-  "Untuk klasifikasi gambar, saya sarankan mencoba convolutional neural network (CNN) atau menggunakan model pra-terlatih seperti ResNet untuk hasil yang lebih baik.",
-  "Hasil clustering Anda terlihat menarik! K-means bekerja dengan baik di sini, tetapi Anda mungkin juga ingin mencoba DBSCAN sebagai perbandingan.",
-  "Berdasarkan tren dalam data Anda, saya dapat melihat beberapa pola yang jelas. Apakah Anda ingin saya menyarankan beberapa teknik visualisasi untuk lebih memahaminya?",
-];
+const uploadedFile = ref<File | null>(null);
+const isDataProcessed = ref(false);
+const activeTab = ref('upload');
 
-const handleSendMessage = () => {
-  if (!inputText.value.trim()) return;
+const dropZoneRef = ref<HTMLDivElement>();
+const fileInput = ref<HTMLInputElement>();
 
-  const userMessage: Message = {
-    id: Date.now().toString(),
-    text: inputText.value,
-    isBot: false,
-    timestamp: new Date(),
-  };
+function handleFiles(files: File[] | null) {
+  if (files && files.length > 0) {
+    if (files[0].size > 10 * 1024 * 1024) {
+      alert("File size cannot exceed 10MB.");
+      return;
+    }
+    uploadedFile.value = files[0];
+    activeTab.value = 'process';
+    isDataProcessed.value = false;
+  }
+}
 
-  messages.value.push(userMessage);
-  inputText.value = '';
-  isTyping.value = true;
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  onDrop: handleFiles,
+  dataTypes: ['text/csv', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+});
 
-  setTimeout(() => {
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: botResponses[Math.floor(Math.random() * botResponses.length)],
-      isBot: true,
-      timestamp: new Date(),
-    };
-    messages.value.push(botMessage);
-    isTyping.value = false;
-  }, 1500);
-};
+function onFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  handleFiles(target.files ? Array.from(target.files) : null);
+}
 
-const quickActions = [
-  'Jelaskan dasar-dasar machine learning',
-  'Bantu dengan pra-pemrosesan data',
-  'Saran pemilihan model',
-  'Interpretasikan hasil saya',
+function open() {
+  fileInput.value?.click();
+}
+
+const tabs = [
+  { id: 'upload', label: '1. Upload', icon: Upload },
+  { id: 'process', label: '2. Process Data', icon: SlidersHorizontal },
+  { id: 'visualize', label: '3. Visualize', icon: BarChart3 },
+  { id: 'train', label: '4. Train Model', icon: Play },
 ];
 </script>
 
 <style scoped>
-.message-enter-active,
-.message-leave-active {
-  transition: all 0.5s ease;
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.message-enter-from,
-.message-leave-to {
+.fade-transform-enter-from {
   opacity: 0;
   transform: translateY(20px);
+}
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 </style>

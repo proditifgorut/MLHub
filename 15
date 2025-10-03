@@ -1,22 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Beranda from '../pages/Beranda.vue';
-import PenambanganData from '../pages/PenambanganData.vue';
-import SainsData from '../pages/SainsData.vue';
-import AnalisisData from '../pages/AnalisisData.vue';
-import Proyek from '../pages/Proyek.vue';
-import Prediksi from '../pages/Prediksi.vue';
+import Home from '../pages/Home.vue';
+import Workspace from '../pages/Workspace.vue';
+import Projects from '../pages/Projects.vue';
+import Predictions from '../pages/Predictions.vue';
 import Chatbot from '../pages/Chatbot.vue';
-import Tentang from '../pages/Tentang.vue';
+import About from '../pages/About.vue';
 
 const routes = [
-  { path: '/', component: Beranda },
-  { path: '/penambangan-data', component: PenambanganData },
-  { path: '/sains-data', component: SainsData },
-  { path: '/analisis-data', component: AnalisisData },
-  { path: '/proyek', component: Proyek },
-  { path: '/prediksi', component: Prediksi },
+  { path: '/', component: Home },
+  { path: '/data-mining', component: Workspace },
+  { path: '/data-science', component: Workspace },
+  { path: '/data-analysis', component: Workspace },
+  { path: '/projects', component: Projects },
+  { path: '/predictions', component: Predictions },
   { path: '/chatbot', component: Chatbot },
-  { path: '/tentang', component: Tentang },
+  { path: '/about', component: About },
 ];
 
 const router = createRouter({

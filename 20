@@ -1,200 +1,181 @@
 <template>
-  <transition name="fade-transform" appear>
-    <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
-      <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">Tidak Ada Data yang Diunggah</h3>
-      <p class="text-gray-600">Silakan unggah dataset terlebih dahulu untuk memvisualisasikan data Anda.</p>
-    </div>
-    
-    <div v-else class="space-y-6">
-      <div class="bg-white rounded-xl shadow-lg p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-semibold text-gray-900">Visualisasi Data</h2>
-          <span v-if="isProcessed" class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-            Data Diproses
-          </span>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="chart in charts"
-            :key="chart.id"
-            @click="activeChart = chart.id"
-            :class="[
-              'flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors',
-              activeChart === chart.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            ]"
-          >
-            <component :is="chart.icon" class="h-4 w-4" />
-            <span>{{ chart.label }}</span>
-          </button>
+  <div class="space-y-8">
+    <div class="bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center">
+        <Camera class="h-6 w-6 mr-2 text-blue-600" />
+        Image Recognition
+      </h2>
+
+      <div
+        ref="dropZoneRef"
+        :class="[
+          'border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors',
+          isOverDropZone
+            ? 'border-blue-400 bg-blue-50'
+            : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+        ]"
+        @click="open"
+      >
+        <input ref="fileInput" type="file" @change="onFileChange" accept="image/*" class="hidden" />
+        <Upload class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          {{ isOverDropZone ? 'Drop image here' : 'Upload an image' }}
+        </h3>
+        <p class="text-gray-600 mb-4">
+          Drag and drop an image, or click to browse
+        </p>
+        <div class="text-sm text-gray-500">
+          Supported formats: PNG, JPG, JPEG, GIF (Max size: 10MB)
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-lg p-6">
-        <div class="h-96">
-          <v-chart class="w-full h-full" :option="chartOption" autoresize />
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Info Dataset</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Baris:</span>
-              <span class="font-medium">1.250</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Kolom:</span>
-              <span class="font-medium">8</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Ukuran:</span>
-              <span class="font-medium">2.4 MB</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Kualitas Data</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Nilai Hilang:</span>
-              <span :class="['font-medium', isProcessed ? 'text-green-600' : 'text-yellow-600']">
-                {{ isProcessed ? '0%' : '2.3%' }}
-              </span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Duplikat:</span>
-              <span class="font-medium text-green-600">0%</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Outlier:</span>
-              <span class="font-medium text-red-600">1.8%</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-lg p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">Korelasi</h3>
-          <div class="space-y-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-gray-600">Harga vs Penjualan:</span>
-              <span class="font-medium">0.76</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Peringkat vs Ulasan:</span>
-              <span class="font-medium">0.82</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Usia vs Pendapatan:</span>
-              <span class="font-medium">0.45</span>
-            </div>
-          </div>
+      <div class="mt-8">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Or try with a sample image:</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <img
+            v-for="(image, index) in sampleImages"
+            :key="index"
+            :src="image"
+            :alt="`Sample ${index + 1}`"
+            class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+            @click="selectSampleImage(image)"
+          />
         </div>
       </div>
     </div>
-  </transition>
+
+    <transition name="fade-transform">
+      <div v-if="uploadedImage || isAnalyzing" class="bg-white rounded-xl shadow-lg p-8">
+        <h3 class="text-xl font-semibold text-gray-900 mb-6">Analysis Results</h3>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              <img
+                v-if="uploadedImage"
+                :src="uploadedImage"
+                alt="Uploaded"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div v-if="isAnalyzing" class="flex items-center justify-center h-full">
+              <div class="text-center">
+                <Zap class="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
+                <p class="text-gray-600">Analyzing image...</p>
+              </div>
+            </div>
+            <div v-else-if="prediction">
+              <div class="flex items-center mb-4">
+                <CheckCircle class="h-6 w-6 text-green-600 mr-2" />
+                <h4 class="text-lg font-semibold text-gray-900">Prediction Complete</h4>
+              </div>
+
+              <div class="mb-6">
+                <div class="text-3xl font-bold text-blue-600 mb-2">
+                  {{ prediction.category }}
+                </div>
+                <div class="text-gray-600">
+                  Confidence: {{(prediction.confidence * 100).toFixed(1)}}%
+                </div>
+              </div>
+
+              <div>
+                <h5 class="font-medium text-gray-900 mb-3">Top Predictions:</h5>
+                <div class="space-y-2">
+                  <div v-for="(pred, index) in prediction.predictions" :key="index" class="flex items-center justify-between">
+                    <span class="text-gray-700">{{ pred.label }}</span>
+                    <div class="flex items-center space-x-2">
+                      <div class="w-24 bg-gray-200 rounded-full h-2">
+                        <div
+                          class="bg-blue-600 h-2 rounded-full"
+                          :style="{ width: `${pred.confidence * 100}%` }"
+                        ></div>
+                      </div>
+                      <span class="text-sm text-gray-600 w-12">
+                        {{(pred.confidence * 100).toFixed(1)}}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { BarChart3, PieChart, LineChart, TrendingUp, FileWarning } from 'lucide-vue-next';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart as EBarChart, LineChart as ELineChart, PieChart as EPieChart, ScatterChart as EScatterChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
-import { faker } from '@faker-js/faker';
+import { ref } from 'vue';
+import { useDropZone } from '@vueuse/core';
+import { Camera, Upload, Zap, CheckCircle } from 'lucide-vue-next';
 
-use([CanvasRenderer, EBarChart, ELineChart, EPieChart, EScatterChart, GridComponent, TooltipComponent, LegendComponent, TitleComponent]);
+const uploadedImage = ref<string | null>(null);
+const prediction = ref<any>(null);
+const isAnalyzing = ref(false);
 
-defineProps<{
-  hasData: boolean;
-  isProcessed: boolean;
-}>();
+const dropZoneRef = ref<HTMLDivElement>();
+const fileInput = ref<HTMLInputElement>();
 
-const activeChart = ref('bar');
+function handleFiles(files: File[] | null) {
+  if (files && files.length > 0) {
+    const file = files[0];
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size cannot exceed 10MB.");
+      return;
+    }
+    const imageUrl = URL.createObjectURL(file);
+    uploadedImage.value = imageUrl;
+    analyzeImage();
+  }
+}
 
-const charts = [
-  { id: 'bar', label: 'Grafik Batang', icon: BarChart3 },
-  { id: 'line', label: 'Grafik Garis', icon: LineChart },
-  { id: 'pie', label: 'Grafik Lingkaran', icon: PieChart },
-  { id: 'scatter', label: 'Grafik Sebar', icon: TrendingUp },
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  onDrop: handleFiles,
+  dataTypes: ['image/*']
+});
+
+function onFileChange(event: Event) {
+  const target = event.target as HTMLInputElement;
+  handleFiles(target.files ? Array.from(target.files) : null);
+}
+
+function open() {
+  fileInput.value?.click();
+}
+
+const analyzeImage = () => {
+  isAnalyzing.value = true;
+  prediction.value = null;
+  setTimeout(() => {
+    prediction.value = {
+      category: 'Cat',
+      confidence: 0.94,
+      predictions: [
+        { label: 'Cat', confidence: 0.94 },
+        { label: 'Dog', confidence: 0.04 },
+        { label: 'Tiger', confidence: 0.02 },
+      ],
+    };
+    isAnalyzing.value = false;
+  }, 2000);
+};
+
+const sampleImages = [
+  'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=300&h=200&fit=crop',
 ];
 
-const chartOption = computed(() => {
-  switch (activeChart.value) {
-    case 'bar':
-      const barData = Array.from({ length: 8 }, () => ({
-        name: faker.commerce.productName().substring(0, 15),
-        value: faker.number.int({ min: 10, max: 100 }),
-        sales: faker.number.int({ min: 1000, max: 5000 }),
-      }));
-      return {
-        tooltip: { trigger: 'axis' },
-        legend: { data: ['Nilai', 'Penjualan'] },
-        xAxis: { type: 'category', data: barData.map(d => d.name), axisLabel: { rotate: -45, interval: 0 } },
-        yAxis: { type: 'value' },
-        series: [
-          { name: 'Nilai', type: 'bar', data: barData.map(d => d.value), itemStyle: { color: '#3B82F6' } },
-          { name: 'Penjualan', type: 'bar', data: barData.map(d => d.sales), itemStyle: { color: '#82ca9d' } },
-        ],
-      };
-    case 'line':
-      const lineData = Array.from({ length: 12 }, (_, i) => ({
-        month: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][i],
-        revenue: faker.number.int({ min: 30000, max: 80000 }),
-        users: faker.number.int({ min: 1000, max: 5000 }),
-      }));
-      return {
-        tooltip: { trigger: 'axis' },
-        legend: { data: ['Pendapatan', 'Pengguna Aktif'] },
-        xAxis: { type: 'category', boundaryGap: false, data: lineData.map(d => d.month) },
-        yAxis: { type: 'value' },
-        series: [
-          { name: 'Pendapatan', type: 'line', smooth: true, data: lineData.map(d => d.revenue), itemStyle: { color: '#3B82F6' } },
-          { name: 'Pengguna Aktif', type: 'line', smooth: true, data: lineData.map(d => d.users), itemStyle: { color: '#10B981' } },
-        ],
-      };
-    case 'pie':
-      const pieData = [
-        { name: 'Teknologi', value: 400, itemStyle: { color: '#3B82F6' } },
-        { name: 'Kesehatan', value: 300, itemStyle: { color: '#10B981' } },
-        { name: 'Keuangan', value: 300, itemStyle: { color: '#F59E0B' } },
-        { name: 'Pendidikan', value: 200, itemStyle: { color: '#EF4444' } },
-      ];
-      return {
-        tooltip: { trigger: 'item' },
-        legend: { orient: 'vertical', left: 'left' },
-        series: [{
-          name: 'Sektor',
-          type: 'pie',
-          radius: '70%',
-          data: pieData,
-          emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' } },
-        }],
-      };
-    case 'scatter':
-      const scatterData = Array.from({ length: 20 }, () => [faker.number.int({ min: 20, max: 100 }), faker.number.int({ min: 20, max: 100 })]);
-      return {
-        tooltip: { trigger: 'item' },
-        xAxis: { name: 'Fitur X' },
-        yAxis: { name: 'Fitur Y' },
-        series: [{
-          name: 'Poin Dataset',
-          symbolSize: 10,
-          data: scatterData,
-          type: 'scatter',
-          itemStyle: { color: '#3B82F6' }
-        }],
-      };
-    default:
-      return {};
-  }
-});
+const selectSampleImage = (image: string) => {
+  uploadedImage.value = image;
+  analyzeImage();
+};
 </script>
 
 <style scoped>
