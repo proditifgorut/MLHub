@@ -1,166 +1,59 @@
 <template>
-  <div class="min-h-screen py-8 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Proyek-Proyek Machine Learning</h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-          Jelajahi proyek-proyek ML umum dengan penjelasan, algoritma, dan contoh hasil.
-        </p>
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
+    <div class="p-6 flex-grow">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-xl font-bold text-gray-900 pr-4">{{ project.title }}</h3>
+        <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
+          <component :is="config.icon" class="h-3 w-3 mr-1" />
+          {{ project.field }}
+        </span>
       </div>
-
-      <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8">
-        <div v-for="(project, index) in projects" :key="index">
-          <ProjectCard :project="project" />
+      <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
+      
+      <div class="space-y-3 text-sm mb-4">
+        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Algorithm:</strong><span class="text-gray-800">{{ project.algorithm }}</span></div>
+        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Formula/Concept:</strong><code class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ project.formula }}</code></div>
+        <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Dataset:</strong><span class="text-gray-800">{{ project.dataset }}</span></div>
+      </div>
+    </div>
+    <div class="p-6 pt-0">
+      <h4 class="text-md font-semibold text-gray-800 mb-2">Example Result / Calculation</h4>
+      <div class="bg-gray-50 p-2 rounded-lg">
+        <div v-if="project.chartType" class="h-[200px]">
+          <v-chart :option="project.chartOption" autoresize />
         </div>
+        <div v-else v-html="project.customChart"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineComponent, shallowRef } from 'vue';
+import { computed, shallowRef } from 'vue';
 import { FlaskConical, ClipboardList, Code2 } from 'lucide-vue-next';
-import { faker } from '@faker-js/faker';
-
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, LineChart, PieChart, ScatterChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import VChart from 'vue-echarts';
 
-use([CanvasRenderer, BarChart, LineChart, PieChart, ScatterChart, GridComponent, TooltipComponent, LegendComponent]);
+const props = defineProps<{
+  project: {
+    title: string;
+    field: string;
+    description: string;
+    algorithm: string;
+    formula: string;
+    dataset: string;
+    chartType?: string;
+    chartOption?: any;
+    customChart?: string;
+  };
+}>();
 
-const ProjectCard = defineComponent({
-  name: 'ProjectCard',
-  components: { VChart, FlaskConical, ClipboardList, Code2 },
-  props: {
-    project: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const fieldConfig: Record<string, { icon: any; color: string }> = {
-      'Sains Data': { icon: shallowRef(FlaskConical), color: 'bg-indigo-100 text-indigo-800' },
-      'Analisis Data': { icon: shallowRef(ClipboardList), color: 'bg-green-100 text-green-800' },
-      'Rekayasa ML': { icon: shallowRef(Code2), color: 'bg-pink-100 text-pink-800' },
-    };
-    const config = fieldConfig[props.project.field as keyof typeof fieldConfig] || fieldConfig['Sains Data'];
-    return { config };
-  },
-  template: `
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
-      <div class="p-6 flex-grow">
-        <div class="flex justify-between items-start mb-4">
-          <h3 class="text-xl font-bold text-gray-900 pr-4">{{ project.title }}</h3>
-          <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
-            <component :is="config.icon" class="h-3 w-3 mr-1" />
-            {{ project.field }}
-          </span>
-        </div>
-        <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
-        
-        <div class="space-y-3 text-sm mb-4">
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Algoritma:</strong><span class="text-gray-800">{{ project.algorithm }}</span></div>
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Rumus/Konsep:</strong><code class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ project.formula }}</code></div>
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Dataset:</strong><span class="text-gray-800">{{ project.dataset }}</span></div>
-        </div>
-      </div>
-      <div class="p-6 pt-0">
-        <h4 class="text-md font-semibold text-gray-800 mb-2">Contoh Hasil / Perhitungan</h4>
-        <div class="bg-gray-50 p-2 rounded-lg">
-          <div v-if="project.chartType" class="h-[200px]">
-            <v-chart :option="project.chartOption" autoresize />
-          </div>
-          <div v-else v-html="project.customChart"></div>
-        </div>
-      </div>
-    </div>
-  `,
+const fieldConfig: Record<string, { icon: any; color: string }> = {
+  'Data Science': { icon: shallowRef(FlaskConical), color: 'bg-indigo-100 text-indigo-800' },
+  'Data Analysis': { icon: shallowRef(ClipboardList), color: 'bg-green-100 text-green-800' },
+  'ML Engineering': { icon: shallowRef(Code2), color: 'bg-pink-100 text-pink-800' },
+};
+
+const config = computed(() => {
+  return fieldConfig[props.project.field as keyof typeof fieldConfig] || fieldConfig['Data Science'];
 });
-
-const projects = [
-  {
-    category: 'Penambangan Data', field: 'Sains Data', title: 'Prediksi Harga Saham',
-    description: 'Menggunakan analisis deret waktu untuk meramalkan harga saham atau mata uang kripto di masa depan berdasarkan data historis.',
-    algorithm: 'Regresi / LSTM', formula: 'y = mx + b (Regresi Linier)', dataset: 'Yahoo Finance, Binance API',
-    chartType: 'line',
-    chartOption: {
-      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: Array.from({ length: 12 }, (_, i) => `Hari ${i + 1}`) }, yAxis: { type: 'value' },
-      series: [
-        { name: 'Aktual', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
-        { name: 'Prediksi', type: 'line', data: Array.from({ length: 12 }, () => faker.number.float({ min: 100, max: 200, fractionDigits: 2 })), smooth: true },
-      ],
-    },
-  },
-  {
-    category: 'Penambangan Data', field: 'Sains Data', title: 'Segmentasi Pelanggan',
-    description: 'Mengelompokkan pelanggan ke dalam segmen-segmen berbeda berdasarkan perilaku pembelian atau demografi untuk pemasaran yang ditargetkan.',
-    algorithm: 'K-Means Clustering', formula: 'minimize Σ ||x - μi||²', dataset: 'Data transaksi e-commerce',
-    chartType: 'scatter',
-    chartOption: {
-      tooltip: { trigger: 'item' }, legend: {}, xAxis: { name: 'Skor Belanja' }, yAxis: { name: 'Pendapatan' },
-      series: [
-        { name: 'Cluster 1', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#8884d8' } },
-        { name: 'Cluster 2', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#82ca9d' } },
-        { name: 'Cluster 3', type: 'scatter', data: Array.from({ length: 20 }, () => [faker.number.float({ min: 10, max: 100 }), faker.number.float({ min: 10, max: 100 })]), itemStyle: { color: '#ffc658' } },
-      ],
-    },
-  },
-  {
-    category: 'Penambangan Data', field: 'Analisis Data', title: 'Analisis Sentimen',
-    description: 'Menganalisis ulasan produk untuk menentukan apakah sentimennya positif, negatif, atau netral menggunakan Natural Language Processing (NLP).',
-    algorithm: 'NLP / Naive Bayes', formula: 'P(A|B) = [P(B|A) * P(A)] / P(B)', dataset: 'Ulasan Amazon/Shopee',
-    chartType: 'bar',
-    chartOption: {
-      tooltip: { trigger: 'axis' }, legend: {}, xAxis: { type: 'category', data: ['Positif', 'Netral', 'Negatif'] }, yAxis: { type: 'value' },
-      series: [{ name: 'Jumlah Ulasan', type: 'bar', data: [faker.number.int({ min: 500, max: 1000 }), faker.number.int({ min: 200, max: 500 }), faker.number.int({ min: 100, max: 300 })] }],
-    },
-  },
-  {
-    category: 'Penambangan Data', field: 'Sains Data', title: 'Deteksi Penipuan',
-    description: 'Mengidentifikasi pola mencurigakan dalam transaksi keuangan untuk mendeteksi dan mencegah aktivitas penipuan.',
-    algorithm: 'Pohon Keputusan / Random Forest', formula: 'Gini Impurity / Information Gain', dataset: 'Transaksi Kartu Kredit',
-    chartType: 'pie',
-    chartOption: {
-      tooltip: { trigger: 'item' }, legend: {},
-      series: [{
-        name: 'Transaksi', type: 'pie', radius: '70%',
-        data: [
-          { value: faker.number.int({ min: 950, max: 1000 }), name: 'Bukan Penipuan', itemStyle: { color: '#82ca9d' } },
-          { value: faker.number.int({ min: 10, max: 50 }), name: 'Penipuan', itemStyle: { color: '#EF4444' } },
-        ],
-      }],
-    },
-  },
-  {
-    category: 'Penambangan Data', field: 'Sains Data', title: 'Prediksi Churn Pelanggan',
-    description: 'Memprediksi pelanggan mana yang kemungkinan besar akan berhenti menggunakan layanan, memungkinkan upaya retensi proaktif.',
-    algorithm: 'Klasifikasi (Regresi Logistik)', formula: 'P(y=1) = 1 / (1 + e^-z)', dataset: 'Data Layanan Berlangganan',
-    chartType: 'bar',
-    chartOption: {
-      grid: { containLabel: true }, tooltip: { trigger: 'axis' },
-      xAxis: { type: 'value' }, yAxis: { type: 'category', data: ['Akan Churn', 'Tidak Akan Churn'] },
-      series: [{ name: 'Jumlah Pelanggan', type: 'bar', data: [150, 850], itemStyle: { color: '#ffc658' } }],
-    },
-  },
-  {
-    category: 'Situs Web/Mobile', field: 'Rekayasa ML', title: 'Sistem Rekomendasi Produk',
-    description: 'Menyarankan produk kepada pengguna berdasarkan perilaku masa lalu mereka atau perilaku pengguna serupa.',
-    algorithm: 'Collaborative Filtering', formula: 'Similarity(A, B) = cos(θ)', dataset: 'Peringkat pengguna, riwayat pembelian',
-    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><h4 class="font-semibold mb-2">Contoh Rekomendasi</h4><div class="flex justify-around items-center"><div class="text-center"><p>Pengguna A suka:</p><p class="font-bold">📱, 💻</p></div><p class="text-2xl">+</p><div class="text-center"><p>Pengguna B suka:</p><p class="font-bold">📱, 💻, ⌚</p></div><p class="text-2xl">→</p><div class="text-center"><p>Rekomendasi untuk A:</p><p class="font-bold text-blue-600 text-2xl">⌚</p></div></div></div>`
-  },
-  {
-    category: 'Situs Web/Mobile', field: 'Rekayasa ML', title: 'Chatbot Cerdas dengan NLP',
-    description: 'Layanan pelanggan otomatis menggunakan model bahasa canggih seperti BERT atau GPT untuk memahami dan menanggapi pertanyaan pengguna.',
-    algorithm: 'Transformers (BERT/GPT)', formula: 'Attention(Q, K, V)', dataset: 'Log percakapan, FAQ',
-    customChart: `<div class="text-sm p-4 bg-gray-50 rounded-lg h-[200px] flex flex-col justify-center"><p><span class="font-bold text-blue-600">Pengguna:</span> Bagaimana cara mereset kata sandi saya?</p><p class="mt-2"><span class="font-bold text-green-600">Bot:</span> Anda dapat mereset kata sandi dengan membuka "Pengaturan" &gt; "Keamanan" dan mengklik "Reset Kata Sandi".</p></div>`
-  },
-  {
-    category: 'Situs Web/Mobile', field: 'Rekayasa ML', title: 'Pengenalan Gambar',
-    description: 'Secara otomatis mengidentifikasi dan memberi label objek dalam gambar yang diunggah pengguna, seperti spesies tanaman atau item makanan.',
-    algorithm: 'Convolutional Neural Network (CNN)', formula: 'Convolution + Pooling Layers', dataset: 'ImageNet, Set Gambar Kustom',
-    customChart: `<div class="text-center p-4 h-[200px] flex flex-col justify-center"><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=120&fit=crop" alt="cat" class="mx-auto rounded-lg mb-2" /><p>Prediksi: <span class="font-bold text-blue-600">Kucing (keyakinan 94%)</span></p></div>`
-  },
-];
 </script>

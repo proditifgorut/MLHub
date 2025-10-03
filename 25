@@ -18,66 +18,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, shallowRef } from 'vue';
-import { FlaskConical, ClipboardList, Code2 } from 'lucide-vue-next';
 import { faker } from '@faker-js/faker';
-
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart, LineChart, PieChart, ScatterChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
+import ProjectCard from '../components/ProjectCard.vue';
 
 use([CanvasRenderer, BarChart, LineChart, PieChart, ScatterChart, GridComponent, TooltipComponent, LegendComponent]);
-
-const ProjectCard = defineComponent({
-  name: 'ProjectCard',
-  components: { VChart, FlaskConical, ClipboardList, Code2 },
-  props: {
-    project: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const fieldConfig: Record<string, { icon: any; color: string }> = {
-      'Data Science': { icon: shallowRef(FlaskConical), color: 'bg-indigo-100 text-indigo-800' },
-      'Data Analysis': { icon: shallowRef(ClipboardList), color: 'bg-green-100 text-green-800' },
-      'ML Engineering': { icon: shallowRef(Code2), color: 'bg-pink-100 text-pink-800' },
-    };
-    const config = fieldConfig[props.project.field as keyof typeof fieldConfig] || fieldConfig['Data Science'];
-    return { config };
-  },
-  template: `
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-full">
-      <div class="p-6 flex-grow">
-        <div class="flex justify-between items-start mb-4">
-          <h3 class="text-xl font-bold text-gray-900 pr-4">{{ project.title }}</h3>
-          <span :class="['flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full shrink-0', config.color]">
-            <component :is="config.icon" class="h-3 w-3 mr-1" />
-            {{ project.field }}
-          </span>
-        </div>
-        <p class="text-gray-600 text-sm mb-4">{{ project.description }}</p>
-        
-        <div class="space-y-3 text-sm mb-4">
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Algorithm:</strong><span class="text-gray-800">{{ project.algorithm }}</span></div>
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Formula/Concept:</strong><code class="bg-gray-100 px-2 py-1 rounded text-gray-800">{{ project.formula }}</code></div>
-          <div class="flex"><strong class="w-28 shrink-0 text-gray-500">Dataset:</strong><span class="text-gray-800">{{ project.dataset }}</span></div>
-        </div>
-      </div>
-      <div class="p-6 pt-0">
-        <h4 class="text-md font-semibold text-gray-800 mb-2">Example Result / Calculation</h4>
-        <div class="bg-gray-50 p-2 rounded-lg">
-          <div v-if="project.chartType" class="h-[200px]">
-            <v-chart :option="project.chartOption" autoresize />
-          </div>
-          <div v-else v-html="project.customChart"></div>
-        </div>
-      </div>
-    </div>
-  `,
-});
 
 const projects = [
   {
