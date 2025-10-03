@@ -1,0 +1,155 @@
+<template>
+  <transition name="fade-transform" appear>
+    <div v-if="!hasData" class="bg-white rounded-xl shadow-lg p-8 text-center">
+      <FileWarning class="h-16 w-16 text-gray-300 mx-auto mb-4" />
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">Tidak Ada Data yang Diunggah</h3>
+      <p class="text-gray-600">Silakan buka tab 'Unggah' untuk mengunggah dataset terlebih dahulu.</p>
+    </div>
+    
+    <div v-else class="bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-semibold text-gray-900 mb-2">Pra-pemrosesan Data</h2>
+      <p class="text-gray-600 mb-6">Bersihkan dan siapkan data Anda untuk analisis dan pelatihan model. Ini adalah langkah penting bagi setiap analis data atau ilmuwan data.</p>
+      
+      <transition name="fade-transform" mode="out-in">
+        <div v-if="processingDone" class="text-center py-8">
+          <CheckCircle class="h-16 w-16 text-green-500 mx-auto mb-4" />
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Pemrosesan Selesai!</h3>
+          <p class="text-gray-600 mb-6">Data Anda telah dibersihkan dan siap untuk langkah selanjutnya.</p>
+          
+          <div class="bg-gray-50 rounded-lg p-4 max-w-md mx-auto text-left space-y-2">
+            <h4 class="font-semibold text-gray-800">Ringkasan Pemrosesan:</h4>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-red-600">{{ summary.rowsRemoved }} baris</span> dengan nilai yang hilang telah dihapus.
+            </p>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-blue-600">{{ summary.columnsScaled }} kolom numerik</span> telah diskalakan menggunakan {{ processingOptions.featureScaling }}.
+            </p>
+            <p class="text-sm text-gray-700">
+              <span class="font-medium text-green-600">{{ summary.columnsEncoded }} kolom kategorikal</span> telah di-encode menggunakan {{ processingOptions.encoding }}.
+            </p>
+          </div>
+
+          <button
+            @click="processingDone = false"
+            class="mt-6 text-blue-600 font-semibold hover:text-blue-700"
+          >
+            Proses Ulang Data
+          </button>
+        </div>
+
+        <div v-else class="space-y-8">
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Trash2 class="h-6 w-6 text-red-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Nilai yang Hilang</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Pilih cara menangani baris dengan data yang hilang. Penting untuk kualitas data.</p>
+              <select
+                v-model="processingOptions.missingValues"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="remove">Hapus Baris</option>
+                <option value="fill-mean">Isi dengan Rata-rata</option>
+                <option value="fill-median">Isi dengan Median</option>
+              </select>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Scale class="h-6 w-6 text-blue-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Penskalaan Fitur</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Normalisasi fitur numerik untuk meningkatkan kinerja model.</p>
+              <select
+                v-model="processingOptions.featureScaling"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="standardization">Standardisasi (Z-score)</option>
+                <option value="normalization">Normalisasi (Min-Max)</option>
+              </select>
+            </div>
+
+            <div class="p-6 bg-gray-50 rounded-lg">
+              <div class="flex items-center mb-3">
+                <Binary class="h-6 w-6 text-green-500 mr-3" />
+                <h3 class="text-lg font-semibold text-gray-800">Encoding Kategorikal</h3>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">Ubah kategori teks menjadi format numerik yang dapat dibaca mesin.</p>
+              <select
+                v-model="processingOptions.encoding"
+                class="w-full p-2 border border-gray-300 rounded-lg"
+              >
+                <option value="one-hot">One-Hot Encoding</option>
+                <option value="label">Label Encoding</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-8 flex justify-end">
+            <button
+              @click="handleProcess"
+              :disabled="isProcessing"
+              class="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <template v-if="isProcessing">
+                <Loader class="h-5 w-5 animate-spin" />
+                <span>Memproses Data...</span>
+              </template>
+              <template v-else>
+                <SlidersHorizontal class="h-5 w-5" />
+                <span>Terapkan Pemrosesan</span>
+              </template>
+            </button>
+          </div>
+        </div>
+      </transition>
+    </div>
+  </transition>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue';
+import { SlidersHorizontal, CheckCircle, Loader, Trash2, Scale, Binary, FileWarning } from 'lucide-vue-next';
+
+const props = defineProps<{
+  hasData: boolean;
+}>();
+
+const emit = defineEmits(['processComplete']);
+
+const isProcessing = ref(false);
+const processingDone = ref(false);
+const summary = reactive({ rowsRemoved: 0, columnsScaled: 0, columnsEncoded: 0 });
+
+const processingOptions = reactive({
+  missingValues: 'remove',
+  featureScaling: 'standardization',
+  encoding: 'one-hot',
+});
+
+const handleProcess = () => {
+  isProcessing.value = true;
+  processingDone.value = false;
+  setTimeout(() => {
+    summary.rowsRemoved = Math.floor(Math.random() * 50);
+    summary.columnsScaled = 3;
+    summary.columnsEncoded = 2;
+    isProcessing.value = false;
+    processingDone.value = true;
+    emit('processComplete');
+  }, 2500);
+};
+</script>
+
+<style scoped>
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-transform-enter-from,
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>
